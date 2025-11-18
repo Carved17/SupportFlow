@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Ticket - SupportFlow</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Reuse sidebar from index.html -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">SF</div>
+                <div class="logo-text">SupportFlow</div>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-item" data-page="dashboard">
+                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                    <span class="nav-text">Dashboard</span>
+                </div>
+                <div class="nav-item active" data-page="create-ticket">
+                    <i class="nav-icon fas fa-plus-circle"></i>
+                    <span class="nav-text">Create Ticket</span>
+                </div>
+                <div class="nav-item" data-page="view-tickets">
+                    <i class="nav-icon fas fa-ticket-alt"></i>
+                    <span class="nav-text">View Tickets</span>
+                </div>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div class="user-details">
+                    <div class="user-name">John Doe</div>
+                    <div class="user-role">Support Agent</div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="topbar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search tickets...">
+                </div>
+                
+                <div class="topbar-actions">
+                    <div class="notification-icon">
+                        <i class="far fa-bell"></i>
+                        <div class="notification-badge">3</div>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <div class="user-menu-avatar">JD</div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="page active">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Create Support Ticket</h1>
+                            <p class="page-subtitle">Submit a new support request for assistance</p>
+                        </div>
+                        <button class="btn btn-outline" onclick="goBack()">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </button>
+                    </div>
+                    
+                    <div class="form-container">
+                        <form id="createTicketForm">
+                            <div class="form-group">
+                                <label class="form-label" for="ticketTitle">Title *</label>
+                                <input type="text" class="form-control" id="ticketTitle" placeholder="Brief description of the issue" required>
+                                <div class="form-error" id="titleError"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="ticketDescription">Description *</label>
+                                <textarea class="form-control" id="ticketDescription" 
+                                        placeholder="Detailed description of the issue. Include steps to reproduce, error messages, and any relevant information."
+                                        required rows="6"></textarea>
+                                <div class="form-error" id="descriptionError"></div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="ticketPriority">Priority *</label>
+                                    <select class="form-control" id="ticketPriority" required>
+                                        <option value="">Select Priority</option>
+                                        <option value="Low">Low</option>
+                                        <option value="Medium" selected>Medium</option>
+                                        <option value="High">High</option>
+                                    </select>
+                                    <div class="form-error" id="priorityError"></div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="ticketCategory">Category *</label>
+                                    <select class="form-control" id="ticketCategory" required>
+                                        <option value="">Select Category</option>
+                                        <option value="Technical">Technical Issue</option>
+                                        <option value="Billing">Billing</option>
+                                        <option value="Feature">Feature Request</option>
+                                        <option value="General">General Inquiry</option>
+                                        <option value="Bug">Bug Report</option>
+                                    </select>
+                                    <div class="form-error" id="categoryError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="customerEmail">Your Email *</label>
+                                <input type="email" class="form-control" id="customerEmail" 
+                                    placeholder="Enter your email address" required>
+                                <div class="form-error" id="emailError"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="ticketAttachment">Attachments</label>
+                                <div class="file-upload-area" id="fileUploadArea">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Drag & drop files here or click to browse</p>
+                                    <input type="file" id="ticketAttachment" multiple style="display: none;">
+                                    <small>Maximum file size: 10MB per file</small>
+                                </div>
+                                <div id="fileList" class="file-list"></div>
+                                <div class="form-error" id="fileError"></div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 12px; margin-top: 32px;">
+                                <button type="submit" class="btn btn-primary" id="submitTicketBtn">
+                                    <i class="fas fa-plus"></i> Create Ticket
+                                </button>
+                                <button type="button" class="btn btn-outline" onclick="resetForm()">
+                                    <i class="fas fa-redo"></i> Reset Form
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="JS/UI.js"></script>
+    <script src="JS/ticketAPI.js"></script>
+    
+    <script>
+        // Navigation functions
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('supportFlowUser');
+            window.location.href = 'index.html';
+        }
+
+        // File upload handling
+        function handleFileSelect(files) {
+            const fileList = document.getElementById('fileList');
+            const fileError = document.getElementById('fileError');
+            fileList.innerHTML = '';
+            fileError.textContent = '';
+
+            for (let file of files) {
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    fileError.textContent = `File "${file.name}" exceeds size limit of 10MB`;
+                    continue;
+                }
+
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <i class="fas fa-file"></i>
+                    <span>${file.name}</span>
+                    <button type="button" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                fileList.appendChild(fileItem);
+            }
+        }
+
+        // Form handling
+        document.getElementById('createTicketForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitTicketBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            // Clear previous errors
+            document.querySelectorAll('.form-error').forEach(el => {
+                el.textContent = '';
+            });
+
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+
+            // Show loading state
+            UI.showLoading(submitBtn, 'Creating ticket...');
+
+            try {
+                const formData = {
+                    title: document.getElementById('ticketTitle').value,
+                    description: document.getElementById('ticketDescription').value,
+                    priority: document.getElementById('ticketPriority').value,
+                    category: document.getElementById('ticketCategory').value,
+                    customerEmail: document.getElementById('customerEmail').value
+                };
+
+                const newTicket = await ticketAPI.createTicket(formData);
+                
+                UI.showSuccess(`Ticket #${newTicket.id} created successfully!`);
+                resetForm();
+                
+                // Redirect to dashboard after a delay
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+
+            } catch (error) {
+                UI.showError('formError', error.message);
+            } finally {
+                UI.hideLoading(submitBtn);
+            }
+        });
+
+        function validateForm() {
+            let isValid = true;
+
+            // Validate required fields
+            const requiredFields = [
+                { id: 'ticketTitle', errorId: 'titleError', message: 'Title is required' },
+                { id: 'ticketDescription', errorId: 'descriptionError', message: 'Description is required' },
+                { id: 'ticketPriority', errorId: 'priorityError', message: 'Priority is required' },
+                { id: 'ticketCategory', errorId: 'categoryError', message: 'Category is required' },
+                { id: 'customerEmail', errorId: 'emailError', message: 'Email is required' }
+            ];
+
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field.id);
+                const errorElement = document.getElementById(field.errorId);
+                
+                if (!element.value.trim()) {
+                    errorElement.textContent = field.message;
+                    isValid = false;
+                }
+            });
+
+            // Validate email format
+            const email = document.getElementById('customerEmail').value;
+            if (email && !UI.isValidEmail(email)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function resetForm() {
+            document.getElementById('createTicketForm').reset();
+            document.getElementById('fileList').innerHTML = '';
+            document.querySelectorAll('.form-error').forEach(el => {
+                el.textContent = '';
+            });
+        }
+
+        // File upload area click handler
+        document.getElementById('fileUploadArea').addEventListener('click', () => {
+            document.getElementById('ticketAttachment').click();
+        });
+
+        // Drag and drop functionality
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileUploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileUploadArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileUploadArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            fileUploadArea.style.backgroundColor = 'rgba(67, 97, 238, 0.1)';
+            fileUploadArea.style.borderColor = 'var(--primary)';
+        }
+
+        function unhighlight() {
+            fileUploadArea.style.backgroundColor = '';
+            fileUploadArea.style.borderColor = '';
+        }
+
+        fileUploadArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFileSelect(files);
+        }
+
+        // Check authentication on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const user = localStorage.getItem('supportFlowUser');
+            if (!user) {
+                window.location.href = 'index.html';
+            } else {
+                // Pre-fill email if user is logged in
+                const userData = JSON.parse(user);
+                document.getElementById('customerEmail').value = userData.email;
+            }
+        });
+    </script>
+</body>
+</html>

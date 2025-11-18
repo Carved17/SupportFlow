@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Tickets - SupportFlow</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Reuse sidebar from index.html -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">SF</div>
+                <div class="logo-text">SupportFlow</div>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-item" data-page="dashboard">
+                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                    <span class="nav-text">Dashboard</span>
+                </div>
+                <div class="nav-item" data-page="create-ticket">
+                    <i class="nav-icon fas fa-plus-circle"></i>
+                    <span class="nav-text">Create Ticket</span>
+                </div>
+                <div class="nav-item active" data-page="view-tickets">
+                    <i class="nav-icon fas fa-ticket-alt"></i>
+                    <span class="nav-text">View Tickets</span>
+                </div>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div class="user-details">
+                    <div class="user-name">John Doe</div>
+                    <div class="user-role">Support Agent</div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="topbar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="ticketSearch" placeholder="Search tickets...">
+                </div>
+                
+                <div class="topbar-actions">
+                    <div class="notification-icon">
+                        <i class="far fa-bell"></i>
+                        <div class="notification-badge">3</div>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <div class="user-menu-avatar">JD</div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="page active">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">View Tickets</h1>
+                            <p class="page-subtitle">Manage and track all support tickets</p>
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-outline" onclick="exportTickets()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="btn btn-primary" onclick="createNewTicket()">
+                                <i class="fas fa-plus"></i> New Ticket
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="filters-card">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label>Status</label>
+                                <select id="filterStatus">
+                                    <option value="all">All Status</option>
+                                    <option value="Open">Open</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Resolved">Resolved</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Priority</label>
+                                <select id="filterPriority">
+                                    <option value="all">All Priority</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Category</label>
+                                <select id="filterCategory">
+                                    <option value="all">All Categories</option>
+                                    <option value="Technical">Technical</option>
+                                    <option value="Billing">Billing</option>
+                                    <option value="Feature">Feature</option>
+                                    <option value="General">General</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Sort By</label>
+                                <select id="sortTickets">
+                                    <option value="newest">Newest First</option>
+                                    <option value="oldest">Oldest First</option>
+                                    <option value="priority">Priority</option>
+                                    <option value="status">Status</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-outline" onclick="clearFilters()">
+                                <i class="fas fa-times"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Tickets Table -->
+                    <div class="tickets-table">
+                        <div class="table-header">
+                            <div class="table-title">
+                                <span id="ticketsCount">0</span> Tickets Found
+                            </div>
+                            <div class="table-controls">
+                                <select id="viewMode">
+                                    <option value="grid">Grid View</option>
+                                    <option value="list">List View</option>
+                                </select>
+                                <select id="itemsPerPage">
+                                    <option value="10">10 per page</option>
+                                    <option value="25" selected>25 per page</option>
+                                    <option value="50">50 per page</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Grid View -->
+                        <div id="ticketsGridView" class="tickets-grid">
+                            <!-- Tickets will be loaded here -->
+                        </div>
+                        
+                        <!-- List View -->
+                        <div id="ticketsListView" class="tickets-list" style="display: none;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Customer</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                        <th>Category</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ticketsTableBody">
+                                    <!-- Tickets will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="pagination" id="pagination">
+                            <!-- Pagination will be generated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="JS/UI.js"></script>
+    <script src="JS/ticketAPI.js"></script>
+    
+    <script>
+        let allTickets = [];
+        let currentPage = 1;
+        let itemsPerPage = 25;
+        let currentView = 'grid';
+        let currentFilters = {
+            status: 'all',
+            priority: 'all',
+            category: 'all',
+            sort: 'newest',
+            search: ''
+        };
+
+        // Navigation functions
+        function goToDashboard() {
+            window.location.href = 'index.html';
+        }
+
+        function createNewTicket() {
+            window.location.href = 'create-ticket.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('supportFlowUser');
+            window.location.href = 'index.html';
+        }
+
+        // Load tickets on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            const user = localStorage.getItem('supportFlowUser');
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            await loadTickets();
+            setupEventListeners();
+        });
+
+        async function loadTickets() {
+            try {
+                allTickets = await ticketAPI.getTickets();
+                applyFilters();
+            } catch (error) {
+                console.error('Error loading tickets:', error);
+                UI.flashMessage('Error loading tickets', 'error');
+            }
+        }
+
+        function setupEventListeners() {
+            // Search
+            document.getElementById('ticketSearch').addEventListener('input', 
+                UI.debounce((e) => {
+                    currentFilters.search = e.target.value;
+                    applyFilters();
+                }, 300)
+            );
+
+            // Filters
+            document.getElementById('filterStatus').addEventListener('change', (e) => {
+                currentFilters.status = e.target.value;
+                applyFilters();
+            });
+
+            document.getElementById('filterPriority').addEventListener('change', (e) => {
+                currentFilters.priority = e.target.value;
+                applyFilters();
+            });
+
+            document.getElementById('filterCategory').addEventListener('change', (e) => {
+                currentFilters.category = e.target.value;
+                applyFilters();
+            });
+
+            document.getElementById('sortTickets').addEventListener('change', (e) => {
+                currentFilters.sort = e.target.value;
+                applyFilters();
+            });
+
+            // View mode
+            document.getElementById('viewMode').addEventListener('change', (e) => {
+                currentView = e.target.value;
+                toggleViewMode();
+            });
+
+            // Items per page
+            document.getElementById('itemsPerPage').addEventListener('change', (e) => {
+                itemsPerPage = parseInt(e.target.value);
+                currentPage = 1;
+                applyFilters();
+            });
+        }
+
+        function applyFilters() {
+            let filteredTickets = [...allTickets];
+
+            // Apply search filter
+            if (currentFilters.search) {
+                const searchTerm = currentFilters.search.toLowerCase();
+                filteredTickets = filteredTickets.filter(ticket => 
+                    ticket.title.toLowerCase().includes(searchTerm) ||
+                    ticket.description.toLowerCase().includes(searchTerm) ||
+                    ticket.customerEmail.toLowerCase().includes(searchTerm) ||
+                    ticket.id.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            // Apply status filter
+            if (currentFilters.status !== 'all') {
+                filteredTickets = filteredTickets.filter(ticket => 
+                    ticket.status === currentFilters.status
+                );
+            }
+
+            // Apply priority filter
+            if (currentFilters.priority !== 'all') {
+                filteredTickets = filteredTickets.filter(ticket => 
+                    ticket.priority === currentFilters.priority
+                );
+            }
+
+            // Apply category filter
+            if (currentFilters.category !== 'all') {
+                filteredTickets = filteredTickets.filter(ticket => 
+                    ticket.category === currentFilters.category
+                );
+            }
+
+            // Apply sorting
+            switch(currentFilters.sort) {
+                case 'newest':
+                    filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    break;
+                case 'oldest':
+                    filteredTickets.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                    break;
+                case 'priority':
+                    const priorityOrder = { 'High': 1, 'Medium': 2, 'Low': 3 };
+                    filteredTickets.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+                    break;
+                case 'status':
+                    const statusOrder = { 'Open': 1, 'In Progress': 2, 'Resolved': 3 };
+                    filteredTickets.sort((a, b) => statusOrder[a.status] - statusOrder[b.status]);
+                    break;
+            }
+
+            renderTickets(filteredTickets);
+        }
+
+        function renderTickets(tickets) {
+            const totalTickets = tickets.length;
+            document.getElementById('ticketsCount').textContent = totalTickets;
+
+            // Calculate pagination
+            const totalPages = Math.ceil(totalTickets / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedTickets = tickets.slice(startIndex, endIndex);
+
+            // Render based on current view mode
+            if (currentView === 'grid') {
+                renderGridView(paginatedTickets);
+            } else {
+                renderListView(paginatedTickets);
+            }
+
+            renderPagination(totalPages);
+        }
+
+        function renderGridView(tickets) {
+            const container = document.getElementById('ticketsGridView');
+            
+            if (tickets.length === 0) {
+                container.innerHTML = `
+                    <div class="no-tickets">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No tickets found</h3>
+                        <p>Try adjusting your filters or search terms</p>
+                        <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = tickets.map(ticket => `
+                <div class="ticket-card" onclick="viewTicket('${ticket.id}')">
+                    <div class="ticket-header">
+                        <div class="ticket-id">#${ticket.id}</div>
+                        <div class="ticket-priority priority-${ticket.priority.toLowerCase()}">
+                            ${ticket.priority}
+                        </div>
+                    </div>
+                    <div class="ticket-title">${ticket.title}</div>
+                    <div class="ticket-description">${UI.truncateText(ticket.description, 100)}</div>
+                    <div class="ticket-meta">
+                        <div><i class="fas fa-user"></i> ${ticket.customerEmail}</div>
+                        <div><i class="fas fa-calendar"></i> ${UI.formatDate(ticket.createdAt)}</div>
+                    </div>
+                    <div class="ticket-footer">
+                        <span class="ticket-status status-${ticket.status.toLowerCase().replace(' ', '')}">
+                            ${ticket.status}
+                        </span>
+                        <span class="ticket-category">${ticket.category || 'General'}</span>
+                    </div>
+                    <div class="ticket-actions">
+                        <button class="action-btn action-view" onclick="event.stopPropagation(); viewTicket('${ticket.id}')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="action-btn action-edit" onclick="event.stopPropagation(); editTicket('${ticket.id}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="action-btn action-resolve" onclick="event.stopPropagation(); resolveTicket('${ticket.id}')">
+                            <i class="fas fa-check"></i> Resolve
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderListView(tickets) {
+            const container = document.getElementById('ticketsTableBody');
+            
+            if (tickets.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="no-tickets-cell">
+                            <div class="no-tickets">
+                                <i class="fas fa-inbox"></i>
+                                <h3>No tickets found</h3>
+                                <p>Try adjusting your filters or search terms</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            container.innerHTML = tickets.map(ticket => `
+                <tr>
+                    <td>#${ticket.id}</td>
+                    <td>
+                        <div class="ticket-title">${ticket.title}</div>
+                        <div class="ticket-description">${UI.truncateText(ticket.description, 50)}</div>
+                    </td>
+                    <td>${ticket.customerEmail}</td>
+                    <td>
+                        <span class="ticket-status status-${ticket.status.toLowerCase().replace(' ', '')}">
+                            ${ticket.status}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="ticket-priority priority-${ticket.priority.toLowerCase()}">
+                            ${ticket.priority}
+                        </span>
+                    </td>
+                    <td>${ticket.category || 'General'}</td>
+                    <td>${UI.formatDate(ticket.createdAt)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn action-view" onclick="viewTicket('${ticket.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn action-edit" onclick="editTicket('${ticket.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn action-resolve" onclick="resolveTicket('${ticket.id}')">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPagination(totalPages) {
+            const container = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '';
+            
+            // Previous button
+            paginationHTML += `
+                <button class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}" 
+                        onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    paginationHTML += `
+                        <button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
+                                onclick="changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    paginationHTML += `<span class="pagination-ellipsis">...</span>`;
+                }
+            }
+
+            // Next button
+            paginationHTML += `
+                <button class="pagination-btn ${currentPage === totalPages ? 'disabled' : ''}" 
+                        onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+
+            container.innerHTML = paginationHTML;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            applyFilters();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleViewMode() {
+            const gridView = document.getElementById('ticketsGridView');
+            const listView = document.getElementById('ticketsListView');
+            
+            if (currentView === 'grid') {
+                gridView.style.display = 'grid';
+                listView.style.display = 'none';
+            } else {
+                gridView.style.display = 'none';
+                listView.style.display = 'block';
+            }
+            
+            applyFilters();
+        }
+
+        function clearFilters() {
+            document.getElementById('ticketSearch').value = '';
+            document.getElementById('filterStatus').value = 'all';
+            document.getElementById('filterPriority').value = 'all';
+            document.getElementById('filterCategory').value = 'all';
+            document.getElementById('sortTickets').value = 'newest';
+            
+            currentFilters = {
+                status: 'all',
+                priority: 'all',
+                category: 'all',
+                sort: 'newest',
+                search: ''
+            };
+            
+            applyFilters();
+        }
+
+        function viewTicket(ticketId) {
+            window.location.href = `ticket-details.html?id=${ticketId}`;
+        }
+
+        async function editTicket(ticketId) {
+            // Implementation for editing ticket
+            UI.flashMessage('Edit functionality coming soon!', 'success');
+        }
+
+        async function resolveTicket(ticketId) {
+            UI.confirm(
+                'Are you sure you want to mark this ticket as resolved?',
+                `resolveTicketConfirmed('${ticketId}')`
+            );
+        }
+
+        async function resolveTicketConfirmed(ticketId) {
+            try {
+                await ticketAPI.updateTicket(ticketId, { status: 'Resolved' });
+                UI.flashMessage('Ticket marked as resolved!', 'success');
+                await loadTickets();
+            } catch (error) {
+                UI.flashMessage('Error resolving ticket', 'error');
+            }
+        }
+
+        function exportTickets() {
+            // Implementation for exporting tickets
+            UI.flashMessage('Export functionality coming soon!', 'success');
+        }
+    </script>
+</body>
+</html>

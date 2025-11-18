@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Details - SupportFlow</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Reuse sidebar from index.html -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">SF</div>
+                <div class="logo-text">SupportFlow</div>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-item" data-page="dashboard">
+                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                    <span class="nav-text">Dashboard</span>
+                </div>
+                <div class="nav-item" data-page="create-ticket">
+                    <i class="nav-icon fas fa-plus-circle"></i>
+                    <span class="nav-text">Create Ticket</span>
+                </div>
+                <div class="nav-item" data-page="view-tickets">
+                    <i class="nav-icon fas fa-ticket-alt"></i>
+                    <span class="nav-text">View Tickets</span>
+                </div>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div class="user-details">
+                    <div class="user-name">John Doe</div>
+                    <div class="user-role">Support Agent</div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="topbar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search tickets...">
+                </div>
+                
+                <div class="topbar-actions">
+                    <div class="notification-icon">
+                        <i class="far fa-bell"></i>
+                        <div class="notification-badge">3</div>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <div class="user-menu-avatar">JD</div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="page active">
+                    <!-- Back button and actions -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <button class="btn btn-outline" onclick="goBack()">
+                            <i class="fas fa-arrow-left"></i> Back to Tickets
+                        </button>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-outline" onclick="printTicket()">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                            <button class="btn btn-primary" onclick="updateTicket()">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Ticket Details -->
+                    <div class="ticket-details-container">
+                        <div class="ticket-main">
+                            <!-- Ticket Header -->
+                            <div class="ticket-header-card">
+                                <div class="ticket-title-section">
+                                    <h1 id="ticketTitle">Login issue after update</h1>
+                                    <div class="ticket-id">#TK-1024</div>
+                                </div>
+                                <div class="ticket-meta-badges">
+                                    <span class="status-badge status-open" id="ticketStatus">Open</span>
+                                    <span class="priority-badge priority-high" id="ticketPriority">High</span>
+                                    <span class="category-badge" id="ticketCategory">Technical</span>
+                                </div>
+                            </div>
+
+                            <!-- Ticket Content -->
+                            <div class="ticket-content-grid">
+                                <!-- Left Column - Ticket Info and Activity -->
+                                <div class="ticket-info-column">
+                                    <!-- Ticket Description -->
+                                    <div class="info-card">
+                                        <h3>Description</h3>
+                                        <p id="ticketDescription">
+                                            After the recent system update, I'm unable to login to my account. 
+                                            I keep getting an "Invalid credentials" error even though I'm sure 
+                                            my password is correct. I've tried resetting my password multiple 
+                                            times but the issue persists.
+                                        </p>
+                                    </div>
+
+                                    <!-- Ticket Details -->
+                                    <div class="info-card">
+                                        <h3>Ticket Details</h3>
+                                        <div class="details-grid">
+                                            <div class="detail-item">
+                                                <label>Customer:</label>
+                                                <span id="customerName">Sarah Johnson</span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <label>Email:</label>
+                                                <span id="customerEmail">sarah.j@example.com</span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <label>Created:</label>
+                                                <span id="ticketCreated">June 15, 2023 10:30 AM</span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <label>Last Updated:</label>
+                                                <span id="ticketUpdated">June 16, 2023 02:15 PM</span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <label>Assigned To:</label>
+                                                <span id="assignedTo">John Doe</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Attachments -->
+                                    <div class="info-card">
+                                        <h3>Attachments</h3>
+                                        <div class="attachments-list" id="attachmentsList">
+                                            <div class="attachment-item">
+                                                <i class="fas fa-file-image"></i>
+                                                <div class="attachment-info">
+                                                    <div class="attachment-name">screenshot.png</div>
+                                                    <div class="attachment-size">2.4 MB</div>
+                                                </div>
+                                                <button class="attachment-download">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                            </div>
+                                            <div class="attachment-item">
+                                                <i class="fas fa-file-text"></i>
+                                                <div class="attachment-info">
+                                                    <div class="attachment-name">error_log.txt</div>
+                                                    <div class="attachment-size">156 KB</div>
+                                                </div>
+                                                <button class="attachment-download">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-outline full-width" style="margin-top: 12px;">
+                                            <i class="fas fa-plus"></i> Add Attachment
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column - Updates and Comments -->
+                                <div class="ticket-activity-column">
+                                    <!-- Quick Actions -->
+                                    <div class="actions-card">
+                                        <h3>Quick Actions</h3>
+                                        <div class="action-buttons-grid">
+                                            <button class="action-btn primary" onclick="changeStatus()">
+                                                <i class="fas fa-sync-alt"></i>
+                                                Change Status
+                                            </button>
+                                            <button class="action-btn secondary" onclick="assignToMe()">
+                                                <i class="fas fa-user-check"></i>
+                                                Assign to Me
+                                            </button>
+                                            <button class="action-btn success" onclick="addInternalNote()">
+                                                <i class="fas fa-sticky-note"></i>
+                                                Add Note
+                                            </button>
+                                            <button class="action-btn warning" onclick="requestInfo()">
+                                                <i class="fas fa-question-circle"></i>
+                                                Request Info
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Status Update -->
+                                    <div class="info-card">
+                                        <h3>Update Status</h3>
+                                        <div class="form-group">
+                                            <label>Status</label>
+                                            <select id="statusSelect" class="form-control">
+                                                <option value="Open">Open</option>
+                                                <option value="In Progress">In Progress</option>
+                                                <option value="Resolved">Resolved</option>
+                                                <option value="Closed">Closed</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Add Comment (Optional)</label>
+                                            <textarea class="form-control" placeholder="Add a comment about this status change..." rows="3"></textarea>
+                                        </div>
+                                        <button class="btn btn-primary full-width">
+                                            Update Status
+                                        </button>
+                                    </div>
+
+                                    <!-- Activity Timeline -->
+                                    <div class="info-card">
+                                        <h3>Activity Timeline</h3>
+                                        <div class="timeline">
+                                            <div class="timeline-item">
+                                                <div class="timeline-marker"></div>
+                                                <div class="timeline-content">
+                                                    <div class="timeline-title">Ticket Resolved</div>
+                                                    <div class="timeline-meta">By John Doe • 2 hours ago</div>
+                                                    <div class="timeline-description">Marked ticket as resolved after confirming the fix.</div>
+                                                </div>
+                                            </div>
+                                            <div class="timeline-item">
+                                                <div class="timeline-marker"></div>
+                                                <div class="timeline-content">
+                                                    <div class="timeline-title">Comment Added</div>
+                                                    <div class="timeline-meta">By Sarah Johnson • 4 hours ago</div>
+                                                    <div class="timeline-description">The issue appears to be fixed now. Thank you!</div>
+                                                </div>
+                                            </div>
+                                            <div class="timeline-item">
+                                                <div class="timeline-marker"></div>
+                                                <div class="timeline-content">
+                                                    <div class="timeline-title">Status Updated</div>
+                                                    <div class="timeline-meta">By John Doe • 6 hours ago</div>
+                                                    <div class="timeline-description">Changed status to In Progress</div>
+                                                </div>
+                                            </div>
+                                            <div class="timeline-item">
+                                                <div class="timeline-marker"></div>
+                                                <div class="timeline-content">
+                                                    <div class="timeline-title">Ticket Assigned</div>
+                                                    <div class="timeline-meta">By System • 1 day ago</div>
+                                                    <div class="timeline-description">Assigned to John Doe</div>
+                                                </div>
+                                            </div>
+                                            <div class="timeline-item">
+                                                <div class="timeline-marker"></div>
+                                                <div class="timeline-content">
+                                                    <div class="timeline-title">Ticket Created</div>
+                                                    <div class="timeline-meta">By Sarah Johnson • 1 day ago</div>
+                                                    <div class="timeline-description">Initial ticket submission</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="JS/UI.js"></script>
+    <script src="JS/ticketAPI.js"></script>
+    
+    <script>
+        let currentTicket = null;
+
+        // Navigation functions
+        function goBack() {
+            window.history.back();
+        }
+
+        function logout() {
+            localStorage.removeItem('supportFlowUser');
+            window.location.href = 'index.html';
+        }
+
+        // Load ticket details on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            const user = localStorage.getItem('supportFlowUser');
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            await loadTicketDetails();
+        });
+
+        async function loadTicketDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ticketId = urlParams.get('id');
+
+            if (!ticketId) {
+                UI.flashMessage('No ticket ID provided', 'error');
+                return;
+            }
+
+            try {
+                currentTicket = await ticketAPI.getTicketById(ticketId);
+                renderTicketDetails();
+            } catch (error) {
+                UI.flashMessage('Error loading ticket details', 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        function renderTicketDetails() {
+            if (!currentTicket) return;
+
+            document.getElementById('ticketTitle').textContent = currentTicket.title;
+            document.getElementById('ticketDescription').textContent = currentTicket.description;
+            document.getElementById('customerName').textContent = currentTicket.customerName;
+            document.getElementById('customerEmail').textContent = currentTicket.customerEmail;
+            document.getElementById('assignedTo').textContent = currentTicket.assignedTo;
+
+            // Format dates
+            const createdDate = new Date(currentTicket.createdAt);
+            const updatedDate = new Date(currentTicket.updatedAt);
+            document.getElementById('ticketCreated').textContent = createdDate.toLocaleString();
+            document.getElementById('ticketUpdated').textContent = updatedDate.toLocaleString();
+
+            // Update status and priority badges
+            document.getElementById('ticketStatus').textContent = currentTicket.status;
+            document.getElementById('ticketStatus').className = `status-badge status-${currentTicket.status.toLowerCase().replace(' ', '')}`;
+            
+            document.getElementById('ticketPriority').textContent = currentTicket.priority;
+            document.getElementById('ticketPriority').className = `priority-badge priority-${currentTicket.priority.toLowerCase()}`;
+            
+            document.getElementById('ticketCategory').textContent = currentTicket.category;
+
+            // Set status select
+            document.getElementById('statusSelect').value = currentTicket.status;
+        }
+
+        function updateTicket() {
+            if (!currentTicket) return;
+
+            const newStatus = document.getElementById('statusSelect').value;
+            
+            // In a real app, this would call your API
+            // await ticketAPI.updateTicket(currentTicket.id, { status: newStatus });
+            
+            currentTicket.status = newStatus;
+            renderTicketDetails();
+            
+            UI.flashMessage('Ticket updated successfully!', 'success');
+        }
+
+        function changeStatus() {
+            document.getElementById('statusSelect').focus();
+        }
+
+        function assignToMe() {
+            const user = JSON.parse(localStorage.getItem('supportFlowUser'));
+            if (user) {
+                currentTicket.assignedTo = user.name;
+                renderTicketDetails();
+                UI.flashMessage('Ticket assigned to you!', 'success');
+            }
+        }
+
+        function addInternalNote() {
+            UI.createModal(
+                'Add Internal Note',
+                `
+                <div class="form-group">
+                    <label class="form-label">Note</label>
+                    <textarea class="form-control" rows="6" placeholder="Enter internal note..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox"> Notify customer via email
+                    </label>
+                </div>
+                `,
+                [
+                    {
+                        text: 'Cancel',
+                        class: 'btn-outline',
+                        onclick: `document.body.removeChild(this.closest('.modal-overlay'))`
+                    },
+                    {
+                        text: 'Add Note',
+                        class: 'btn-primary',
+                        onclick: `addNote(); document.body.removeChild(this.closest('.modal-overlay'))`
+                    }
+                ]
+            );
+        }
+
+        function addNote() {
+            UI.flashMessage('Internal note added!', 'success');
+        }
+
+        function requestInfo() {
+            UI.createModal(
+                'Request Information',
+                `
+                <div class="form-group">
+                    <label class="form-label">Information Needed</label>
+                    <textarea class="form-control" rows="6" placeholder="What information do you need from the customer?"></textarea>
+                </div>
+                `,
+                [
+                    {
+                        text: 'Cancel',
+                        class: 'btn-outline',
+                        onclick: `document.body.removeChild(this.closest('.modal-overlay'))`
+                    },
+                    {
+                        text: 'Send Request',
+                        class: 'btn-primary',
+                        onclick: `sendInfoRequest(); document.body.removeChild(this.closest('.modal-overlay'))`
+                    }
+                ]
+            );
+        }
+
+        function sendInfoRequest() {
+            UI.flashMessage('Information request sent to customer!', 'success');
+        }
+
+        function printTicket() {
+            window.print();
+        }
+    </script>
+
+    <style>
+        .ticket-details-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .ticket-header-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .ticket-title-section h1 {
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            color: var(--dark);
+        }
+
+        .ticket-id {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .ticket-meta-badges {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .status-badge, .priority-badge, .category-badge {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .category-badge {
+            background: var(--gray-light);
+            color: var(--gray);
+        }
+
+        .ticket-content-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 24px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .info-card h3 {
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            color: var(--dark);
+            border-bottom: 1px solid var(--gray-light);
+            padding-bottom: 8px;
+        }
+
+        .details-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-item label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .attachments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--gray-light);
+            border-radius: var(--border-radius);
+        }
+
+        .attachment-item i {
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .attachment-info {
+            flex: 1;
+        }
+
+        .attachment-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .attachment-size {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .attachment-download {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .attachment-download:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .actions-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .action-buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 12px;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .action-btn.primary {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .action-btn.secondary {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .action-btn.success {
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .action-btn.warning {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .action-btn i {
+            font-size: 20px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -20px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .timeline-content {
+            background: var(--gray-light);
+            padding: 16px;
+            border-radius: var(--border-radius);
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+
+        .timeline-meta {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 8px;
+        }
+
+        .timeline-description {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 992px) {
+            .ticket-content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ticket-header-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .action-buttons-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .ticket-header-card {
+                padding: 16px;
+            }
+            
+            .ticket-title-section h1 {
+                font-size: 20px;
+            }
+            
+            .info-card {
+                padding: 16px;
+            }
+        }
+
+        @media print {
+            .sidebar, .topbar, .btn {
+                display: none !important;
+            }
+            
+            .main-content {
+                margin: 0;
+                padding: 20px;
+            }
+            
+            .ticket-details-container {
+                max-width: none;
+            }
+        }
+    </style>
+</body>
+</html>

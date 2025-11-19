@@ -27,11 +27,11 @@ class SupportFlowApp {
 
     setupEventListeners() {
         console.log('Setting up event listeners');
-        
+
         // Login/Register forms
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
-        
+
         if (loginForm) {
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -39,7 +39,7 @@ class SupportFlowApp {
                 this.handleLogin(e);
             });
         }
-        
+
         if (registerForm) {
             registerForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -98,7 +98,7 @@ class SupportFlowApp {
         // Global search
         const globalSearch = document.getElementById('globalSearch');
         if (globalSearch) {
-            globalSearch.addEventListener('input', 
+            globalSearch.addEventListener('input',
                 UI.debounce((e) => {
                     this.currentFilters.search = e.target.value;
                     console.log('Search input:', this.currentFilters.search);
@@ -106,7 +106,7 @@ class SupportFlowApp {
                 }, 300)
             );
         }
-        
+
         // Dashboard filters
         const statusFilter = document.getElementById('statusFilter');
         const sortBy = document.getElementById('sortBy');
@@ -250,15 +250,15 @@ class SupportFlowApp {
             tab.addEventListener('click', () => {
                 const tabName = tab.getAttribute('data-tab');
                 console.log('Tab clicked:', tabName);
-                
+
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                
+
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.remove('active');
                 });
                 document.getElementById(`${tabName}-tab`).classList.add('active');
-                
+
                 UI.hideError('loginError');
                 UI.hideError('registerError');
             });
@@ -318,7 +318,7 @@ class SupportFlowApp {
             const user = await ticketAPI.login(email, password);
             this.currentUser = user;
             localStorage.setItem('supportFlowUser', JSON.stringify(user));
-            
+
             UI.showSuccess('Login successful! Welcome back.');
             this.showApp();
         } catch (error) {
@@ -364,7 +364,7 @@ class SupportFlowApp {
             const user = await ticketAPI.register(name, email, password);
             this.currentUser = user;
             localStorage.setItem('supportFlowUser', JSON.stringify(user));
-            
+
             UI.showSuccess('Registration successful! Welcome to SupportFlow.');
             this.showApp();
         } catch (error) {
@@ -382,63 +382,63 @@ class SupportFlowApp {
         console.log('User logged out');
     }
 
-// IN YOUR main.js - UPDATE THE handleNavigation METHOD:
+    // IN YOUR main.js - UPDATE THE handleNavigation METHOD:
 
-handleNavigation(e) {
-    const target = e.currentTarget;
-    const page = target.getAttribute('data-page');
-    
-    console.log('Navigation clicked:', page, 'User role:', this.currentUser?.role);
-    
-    // Check admin access for admin dashboard
-    if (page === 'admin-dashboard') {
-        if (!this.currentUser) {
-            UI.showError('globalError', 'Please login first.');
-            console.log('No user logged in');
-            
-            // Don't proceed with navigation
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            // Re-activate the current active item or default to dashboard
-            const activeItem = document.querySelector('.nav-item[data-page="dashboard"]');
-            if (activeItem) activeItem.classList.add('active');
-            return;
+    handleNavigation(e) {
+        const target = e.currentTarget;
+        const page = target.getAttribute('data-page');
+
+        console.log('Navigation clicked:', page, 'User role:', this.currentUser?.role);
+
+        // Check admin access for admin dashboard
+        if (page === 'admin-dashboard') {
+            if (!this.currentUser) {
+                UI.showError('globalError', 'Please login first.');
+                console.log('No user logged in');
+
+                // Don't proceed with navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                // Re-activate the current active item or default to dashboard
+                const activeItem = document.querySelector('.nav-item[data-page="dashboard"]');
+                if (activeItem) activeItem.classList.add('active');
+                return;
+            }
+
+            if (this.currentUser.role !== 'admin') {
+                UI.showError('globalError', 'Access denied. Admin privileges required.');
+                console.log('Admin access denied for user role:', this.currentUser.role);
+
+                // Don't proceed with navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                // Re-activate the current active item
+                const activeItem = document.querySelector('.nav-item[data-page="dashboard"]');
+                if (activeItem) activeItem.classList.add('active');
+                return;
+            }
         }
-        
-        if (this.currentUser.role !== 'admin') {
-            UI.showError('globalError', 'Access denied. Admin privileges required.');
-            console.log('Admin access denied for user role:', this.currentUser.role);
-            
-            // Don't proceed with navigation
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            // Re-activate the current active item
-            const activeItem = document.querySelector('.nav-item[data-page="dashboard"]');
-            if (activeItem) activeItem.classList.add('active');
-            return;
-        }
+
+        // Update active nav item
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        target.classList.add('active');
+
+        // Navigate to page
+        this.navigateToPage(page);
     }
-    
-    // Update active nav item
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    target.classList.add('active');
-    
-    // Navigate to page
-    this.navigateToPage(page);
-}
 
     navigateToPage(page) {
         console.log('Navigating to page:', page);
-        
+
         // Hide all pages
         document.querySelectorAll('.page').forEach(p => {
             p.classList.remove('active');
         });
-        
+
         // Show target page
         const targetPage = document.getElementById(`${page}-page`);
         if (targetPage) {
@@ -447,9 +447,9 @@ handleNavigation(e) {
         } else {
             console.error('Page not found:', page);
         }
-        
+
         // Load page-specific data
-        switch(page) {
+        switch (page) {
             case 'dashboard':
                 this.loadDashboard();
                 break;
@@ -498,7 +498,7 @@ handleNavigation(e) {
     renderRecentTickets() {
         const container = document.getElementById('ticketsGrid');
         const filteredTickets = this.applyFilters();
-        
+
         if (filteredTickets.length === 0) {
             container.innerHTML = `
                 <div class="no-tickets">
@@ -544,7 +544,7 @@ handleNavigation(e) {
         // Apply search filter
         if (this.currentFilters.search) {
             const searchTerm = this.currentFilters.search.toLowerCase();
-            filteredTickets = filteredTickets.filter(ticket => 
+            filteredTickets = filteredTickets.filter(ticket =>
                 ticket.title.toLowerCase().includes(searchTerm) ||
                 ticket.description.toLowerCase().includes(searchTerm) ||
                 ticket.customerEmail.toLowerCase().includes(searchTerm) ||
@@ -554,27 +554,27 @@ handleNavigation(e) {
 
         // Apply status filter
         if (this.currentFilters.status !== 'all') {
-            filteredTickets = filteredTickets.filter(ticket => 
+            filteredTickets = filteredTickets.filter(ticket =>
                 ticket.status === this.currentFilters.status
             );
         }
 
         // Apply priority filter
         if (this.currentFilters.priority !== 'all') {
-            filteredTickets = filteredTickets.filter(ticket => 
+            filteredTickets = filteredTickets.filter(ticket =>
                 ticket.priority === this.currentFilters.priority
             );
         }
 
         // Apply category filter
         if (this.currentFilters.category !== 'all') {
-            filteredTickets = filteredTickets.filter(ticket => 
+            filteredTickets = filteredTickets.filter(ticket =>
                 ticket.category === this.currentFilters.category
             );
         }
 
         // Apply sorting
-        switch(this.currentFilters.sort) {
+        switch (this.currentFilters.sort) {
             case 'newest':
                 filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 break;
@@ -617,7 +617,7 @@ handleNavigation(e) {
 
     renderGridView(tickets) {
         const container = document.getElementById('ticketsGridView');
-        
+
         if (tickets.length === 0) {
             container.innerHTML = `
                 <div class="no-tickets">
@@ -667,7 +667,7 @@ handleNavigation(e) {
 
     renderListView(tickets) {
         const container = document.getElementById('ticketsTableBody');
-        
+
         if (tickets.length === 0) {
             container.innerHTML = `
                 <tr>
@@ -722,14 +722,14 @@ handleNavigation(e) {
 
     renderPagination(totalPages) {
         const container = document.getElementById('pagination');
-        
+
         if (totalPages <= 1) {
             container.innerHTML = '';
             return;
         }
 
         let paginationHTML = '';
-        
+
         // Previous button
         paginationHTML += `
             <button class="pagination-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
@@ -773,7 +773,7 @@ handleNavigation(e) {
     toggleViewMode() {
         const gridView = document.getElementById('ticketsGridView');
         const listView = document.getElementById('ticketsListView');
-        
+
         if (this.currentView === 'grid') {
             gridView.style.display = 'grid';
             listView.style.display = 'none';
@@ -781,7 +781,7 @@ handleNavigation(e) {
             gridView.style.display = 'none';
             listView.style.display = 'block';
         }
-        
+
         this.applyFilters();
         console.log('View mode toggled to:', this.currentView);
     }
@@ -792,7 +792,7 @@ handleNavigation(e) {
         document.getElementById('viewFilterPriority').value = 'all';
         document.getElementById('viewFilterCategory').value = 'all';
         document.getElementById('viewSortTickets').value = 'newest';
-        
+
         this.currentFilters = {
             status: 'all',
             priority: 'all',
@@ -800,7 +800,7 @@ handleNavigation(e) {
             sort: 'newest',
             search: ''
         };
-        
+
         this.applyFilters();
         console.log('Filters cleared');
     }
@@ -853,10 +853,10 @@ handleNavigation(e) {
             };
 
             const newTicket = await ticketAPI.createTicket(ticketData);
-            
+
             UI.showSuccess(`Ticket #${newTicket.id} created successfully!`);
             this.resetCreateForm();
-            
+
             // Redirect to dashboard after a delay
             setTimeout(() => {
                 this.navigateToPage('dashboard');
@@ -912,54 +912,26 @@ handleNavigation(e) {
     }
 
     async editTicket(ticketId) {
-        const ticket = this.tickets.find(t => t.id === ticketId);
-        if (!ticket) return;
+        try {
+            console.log('Editing ticket:', ticketId);
+            const ticket = await ticketAPI.getTicket(ticketId);
 
-        console.log('Editing ticket:', ticketId);
+            if (!ticket) {
+                UI.showError('globalError', 'Ticket not found');
+                return;
+            }
 
-        UI.createModal(
-            'Edit Ticket',
-            `
-            <div class="form-group">
-                <label class="form-label">Title</label>
-                <input type="text" class="form-control" id="editTitle" value="${ticket.title}">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Description</label>
-                <textarea class="form-control" id="editDescription" rows="4">${ticket.description}</textarea>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Status</label>
-                    <select class="form-control" id="editStatus">
-                        <option value="Open" ${ticket.status === 'Open' ? 'selected' : ''}>Open</option>
-                        <option value="In Progress" ${ticket.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                        <option value="Resolved" ${ticket.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Priority</label>
-                    <select class="form-control" id="editPriority">
-                        <option value="Low" ${ticket.priority === 'Low' ? 'selected' : ''}>Low</option>
-                        <option value="Medium" ${ticket.priority === 'Medium' ? 'selected' : ''}>Medium</option>
-                        <option value="High" ${ticket.priority === 'High' ? 'selected' : ''}>High</option>
-                    </select>
-                </div>
-            </div>
-            `,
-            [
-                {
-                    text: 'Cancel',
-                    class: 'btn-outline',
-                    onclick: `document.body.removeChild(this.closest('.modal-overlay'))`
-                },
-                {
-                    text: 'Save Changes',
-                    class: 'btn-primary',
-                    onclick: `app.saveTicketEdit('${ticketId}')`
-                }
-            ]
-        );
+            // Create edit modal
+            UI.createEditTicketModal(ticket, () => {
+                // Refresh the dashboard after save
+                this.loadDashboard();
+                this.loadTicketsView();
+            });
+
+        } catch (error) {
+            console.error('Error editing ticket:', error);
+            UI.showError('globalError', 'Failed to load ticket for editing');
+        }
     }
 
     async saveTicketEdit(ticketId) {
@@ -974,7 +946,7 @@ handleNavigation(e) {
             await ticketAPI.updateTicket(ticketId, updates);
             UI.showSuccess('Ticket updated successfully!');
             await this.loadDashboard();
-            
+
             // Close modal
             const modal = document.querySelector('.modal-overlay');
             if (modal) document.body.removeChild(modal);
@@ -1027,14 +999,14 @@ handleNavigation(e) {
 
     loadAdminDashboard() {
         console.log('Loading admin dashboard...');
-        
+
         // Check if user is admin
         if (!this.currentUser || this.currentUser.role !== 'admin') {
             UI.showError('globalError', 'Admin access required');
             this.navigateToPage('dashboard');
             return;
         }
-        
+
         // Load admin-specific data
         this.renderAdminTickets();
         UI.showSuccess('Welcome to Admin Dashboard!');
@@ -1047,9 +1019,9 @@ handleNavigation(e) {
             console.error('Admin tickets container not found');
             return;
         }
-        
+
         const adminTickets = this.tickets; // Show all tickets for admin
-        
+
         if (adminTickets.length === 0) {
             container.innerHTML = `
                 <div class="no-tickets">

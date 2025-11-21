@@ -2,12 +2,12 @@
 const API_BASE_URL = 'http://localhost:5000/api';
 
 class TicketAPI {
-    // User authentication
+    // User authentication (demo - for frontend only)
     static async login(email, password) {
         try {
-            console.log('Attempting login for:', email);
+            console.log('🔐 Login attempt:', email);
             
-            // For demo purposes - accept any login but set roles based on email
+            // Demo authentication - replace with real backend auth later
             let role = 'user';
             let name = email.split('@')[0];
             
@@ -18,7 +18,6 @@ class TicketAPI {
                 role = 'agent';
                 name = 'Support Agent';
             } else if (email.includes('admin')) {
-                // Any email containing "admin" gets admin role for testing
                 role = 'admin';
                 name = 'Admin ' + name;
             }
@@ -30,19 +29,19 @@ class TicketAPI {
                 role: role
             };
             
-            console.log('Login successful:', user);
+            console.log('✅ Login successful:', user);
             return user;
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('❌ Login error:', error);
             throw new Error('Invalid email or password');
         }
     }
 
     static async register(name, email, password) {
         try {
-            console.log('Registering user:', name, email);
+            console.log('📝 Registration attempt:', name, email);
             
-            // For demo purposes
+            // Demo registration
             const user = {
                 id: Date.now(),
                 name: name,
@@ -50,18 +49,20 @@ class TicketAPI {
                 role: 'user'
             };
             
-            console.log('Registration successful:', user);
+            console.log('✅ Registration successful:', user);
             return user;
         } catch (error) {
-            console.error('Registration error:', error);
+            console.error('❌ Registration error:', error);
             throw new Error('Registration failed');
         }
     }
 
-    // Ticket operations - USING REAL BACKEND (CHANGED)
+    // REAL TICKET OPERATIONS WITH BACKEND API
+
+    // Create a new ticket
     static async createTicket(ticketData) {
         try {
-            console.log('Creating ticket with backend:', ticketData);
+            console.log('📝 Creating ticket via API:', ticketData);
             
             const response = await fetch(`${API_BASE_URL}/tickets`, {
                 method: 'POST',
@@ -71,60 +72,68 @@ class TicketAPI {
                 body: JSON.stringify(ticketData)
             });
 
+            const result = await response.json();
+
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Failed to create ticket: ${response.status} ${errorText}`);
+                throw new Error(result.error || `Failed to create ticket: ${response.status}`);
             }
 
-            const result = await response.json();
-            console.log('Ticket created successfully:', result);
-            return result;
+            console.log('✅ Ticket created successfully via API:', result.data);
+            return result.data;
+            
         } catch (error) {
-            console.error('Error creating ticket:', error);
+            console.error('❌ Error creating ticket via API:', error);
             throw error;
         }
     }
 
+    // Get all tickets
     static async getTickets() {
         try {
-            console.log('Fetching tickets from backend...');
+            console.log('📋 Fetching tickets via API...');
+            
             const response = await fetch(`${API_BASE_URL}/tickets`);
-            
+            const result = await response.json();
+
             if (!response.ok) {
-                throw new Error(`Failed to fetch tickets: ${response.statusText}`);
+                throw new Error(result.error || `Failed to fetch tickets: ${response.status}`);
             }
 
-            const tickets = await response.json();
-            console.log('Tickets fetched from backend:', tickets.length);
-            return tickets;
-        } catch (error) {
-            console.error('Error fetching tickets:', error);
-            // Return empty array if backend is not available
-            return [];
-        }
-    }
-
-    static async getTicket(id) {
-        try {
-            console.log('Fetching ticket:', id);
-            const response = await fetch(`${API_BASE_URL}/tickets/${id}`);
+            console.log(`✅ Tickets fetched successfully via API: ${result.count} tickets`);
+            return result.data;
             
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ticket: ${response.statusText}`);
-            }
-
-            const ticket = await response.json();
-            console.log('Ticket fetched:', ticket);
-            return ticket;
         } catch (error) {
-            console.error('Error fetching ticket:', error);
+            console.error('❌ Error fetching tickets via API:', error);
             throw error;
         }
     }
 
+    // Get single ticket
+    static async getTicket(id) {
+        try {
+            console.log('🔍 Fetching ticket via API:', id);
+            
+            const response = await fetch(`${API_BASE_URL}/tickets/${id}`);
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || `Failed to fetch ticket: ${response.status}`);
+            }
+
+            console.log('✅ Ticket fetched successfully via API:', result.data);
+            return result.data;
+            
+        } catch (error) {
+            console.error('❌ Error fetching ticket via API:', error);
+            throw error;
+        }
+    }
+
+    // Update ticket
     static async updateTicket(id, ticketData) {
         try {
-            console.log('Updating ticket:', id, ticketData);
+            console.log('✏️ Updating ticket via API:', id, ticketData);
+            
             const response = await fetch(`${API_BASE_URL}/tickets/${id}`, {
                 method: 'PUT',
                 headers: {
@@ -133,41 +142,78 @@ class TicketAPI {
                 body: JSON.stringify(ticketData)
             });
 
+            const result = await response.json();
+
             if (!response.ok) {
-                throw new Error(`Failed to update ticket: ${response.statusText}`);
+                throw new Error(result.error || `Failed to update ticket: ${response.status}`);
             }
 
-            const result = await response.json();
-            console.log('Ticket updated successfully:', result);
-            return result;
+            console.log('✅ Ticket updated successfully via API:', result.data);
+            return result.data;
+            
         } catch (error) {
-            console.error('Error updating ticket:', error);
+            console.error('❌ Error updating ticket via API:', error);
             throw error;
         }
     }
 
+    // Delete ticket
     static async deleteTicket(id) {
         try {
-            console.log('Deleting ticket:', id);
+            console.log('🗑️ Deleting ticket via API:', id);
+            
             const response = await fetch(`${API_BASE_URL}/tickets/${id}`, {
                 method: 'DELETE'
             });
 
+            const result = await response.json();
+
             if (!response.ok) {
-                throw new Error(`Failed to delete ticket: ${response.statusText}`);
+                throw new Error(result.error || `Failed to delete ticket: ${response.status}`);
             }
 
+            console.log('✅ Ticket deleted successfully via API:', result.data);
+            return result.data;
+            
+        } catch (error) {
+            console.error('❌ Error deleting ticket via API:', error);
+            throw error;
+        }
+    }
+
+    // Health check
+    static async healthCheck() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/health`);
+            return await response.json();
+        } catch (error) {
+            console.error('❌ Health check failed:', error);
+            throw error;
+        }
+    }
+
+    // Initialize sample data
+    static async initSampleData() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/init-data`, {
+                method: 'POST'
+            });
             const result = await response.json();
-            console.log('Ticket deleted successfully:', result);
+            
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to initialize sample data');
+            }
+            
+            console.log('✅ Sample data initialized:', result);
             return result;
         } catch (error) {
-            console.error('Error deleting ticket:', error);
+            console.error('❌ Error initializing sample data:', error);
             throw error;
         }
     }
 }
 
-// Create global instance for backward compatibility
+// Global instance
 const ticketAPI = {
     login: (email, password) => TicketAPI.login(email, password),
     register: (name, email, password) => TicketAPI.register(name, email, password),
@@ -175,7 +221,9 @@ const ticketAPI = {
     getTickets: () => TicketAPI.getTickets(),
     getTicket: (id) => TicketAPI.getTicket(id),
     updateTicket: (id, ticketData) => TicketAPI.updateTicket(id, ticketData),
-    deleteTicket: (id) => TicketAPI.deleteTicket(id)
+    deleteTicket: (id) => TicketAPI.deleteTicket(id),
+    healthCheck: () => TicketAPI.healthCheck(),
+    initSampleData: () => TicketAPI.initSampleData()
 };
 
 // Make available globally

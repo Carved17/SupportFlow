@@ -2,16 +2,20 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    // Don't connect to real DB in test environment
-    if (process.env.NODE_ENV === 'test') {
-      console.log("Skipping MongoDB connection in test environment");
-      return; // Tests will handle their own in-memory connection
-    }
+    // Use explicit localhost IP for Codespaces compatibility
+    const mongoURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/support_system";
     
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("MongoDB Connected");
+    console.log("Connecting to MongoDB...");
+    
+    await mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    
+    console.log("✅ MongoDB Connected Successfully");
   } catch (err) {
-    console.log("MongoDB Connection Error:", err);
+    console.log("❌ MongoDB Connection Error:", err.message);
+    console.log("💡 Make sure MongoDB is running: sudo systemctl start mongodb");
     process.exit(1);
   }
 };

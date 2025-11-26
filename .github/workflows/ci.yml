@@ -68,8 +68,13 @@ jobs:
 
   build-check:
     runs-on: ubuntu-latest
-    needs: test-backend
     
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -80,26 +85,54 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Verify server startup
+    - name: Verify server module loading
       run: |
-        # Check if server file can be required with all dependencies
+        # Check if server file can be required without starting the server
         node -e "
+          // Mock the server startup to avoid actual HTTP listening
+          const originalListen = require('http').Server.prototype.listen;
+          require('http').Server.prototype.listen = function() {
+            console.log('✓ Server would start on port ' + arguments[0]);
+            // Don't actually start the server
+            return this;
+          };
+          
           try {
-            require('./backend/server.js');
-            console.log('✓ Server file loaded successfully');
+            const server = require('./backend/server.js');
+            console.log('✓ Server module loaded successfully');
+            
+            // If server exports app, we can test it
+            if (server && typeof server === 'object') {
+              console.log('✓ Server exports detected');
+            }
           } catch (error) {
             console.error('✗ Error loading server:', error.message);
             process.exit(1);
+          } finally {
+            // Restore original listen method
+            require('http').Server.prototype.listen = originalListen;
           }
         "
 
-    - name: Check production build
+    - name: Check server syntax and dependencies
       run: |
-        # Test if the app can start in production mode
-        NODE_ENV=production node -e "
-          const app = require('./backend/server.js');
-          console.log('✓ Production mode check passed');
-        " || echo "Note: Server might need additional setup for production"
+        # Syntax check
+        node -c backend/server.js && echo "✅ server.js syntax is valid"
+        
+        # Check if all dependencies can be resolved
+        node -e "
+          const deps = ['express', 'mongoose', 'cors', 'bcryptjs', 'dotenv'];
+          deps.forEach(dep => {
+            try {
+              require(dep);
+              console.log('✓ ' + dep + ' dependency resolved');
+            } catch (e) {
+              console.error('✗ ' + dep + ' dependency error: ' + e.message);
+              process.exit(1);
+            }
+          });
+          console.log('✅ All dependencies resolved successfully');
+        "
 
   code-quality:
     runs-on: ubuntu-latest
@@ -131,8 +164,5 @@ jobs:
         # Check package.json scripts
         echo "✅ Available scripts:"
         npm run
-
-        # Basic syntax check for server.js
-        node -c backend/server.js && echo "✅ server.js syntax is valid"
 
         echo "✅ All basic checks passed"

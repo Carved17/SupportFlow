@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <div class="app-container">
         <!-- Reuse sidebar from index.html -->
@@ -15,7 +17,7 @@
                 <div class="logo-icon">SF</div>
                 <div class="logo-text">SupportFlow</div>
             </div>
-            
+
             <div class="nav-menu">
                 <div class="nav-item" data-page="dashboard">
                     <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -30,7 +32,7 @@
                     <span class="nav-text">View Tickets</span>
                 </div>
             </div>
-            
+
             <div class="user-info">
                 <div class="user-avatar">JD</div>
                 <div class="user-details">
@@ -42,31 +44,32 @@
                 </button>
             </div>
         </div>
-        
+
         <div class="main-content">
             <div class="topbar">
                 <div class="search-bar">
                     <i class="fas fa-search"></i>
                     <input type="text" placeholder="Search tickets...">
                 </div>
-                
+
                 <div class="topbar-actions">
                     <div class="notification-icon">
                         <i class="far fa-bell"></i>
                         <div class="notification-badge">3</div>
                     </div>
-                    
+
                     <div class="user-menu">
                         <div class="user-menu-avatar">JD</div>
                         <i class="fas fa-chevron-down"></i>
                     </div>
                 </div>
             </div>
-            
+
             <div class="content">
                 <div class="page active">
                     <!-- Back button and actions -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                         <button class="btn btn-outline" onclick="goBack()">
                             <i class="fas fa-arrow-left"></i> Back to Tickets
                         </button>
@@ -86,13 +89,13 @@
                             <!-- Ticket Header -->
                             <div class="ticket-header-card">
                                 <div class="ticket-title-section">
-                                    <h1 id="ticketTitle">Login issue after update</h1>
-                                    <div class="ticket-id">#TK-1024</div>
+                                    <h1 id="ticketTitle">Loading ticket...</h1>
+                                    <div class="ticket-id" id="ticketIdDisplay">#Loading...</div>
                                 </div>
                                 <div class="ticket-meta-badges">
-                                    <span class="status-badge status-open" id="ticketStatus">Open</span>
-                                    <span class="priority-badge priority-high" id="ticketPriority">High</span>
-                                    <span class="category-badge" id="ticketCategory">Technical</span>
+                                    <span class="status-badge status-open" id="ticketStatus">Loading</span>
+                                    <span class="priority-badge priority-high" id="ticketPriority">Loading</span>
+                                    <span class="category-badge" id="ticketCategory">Loading</span>
                                 </div>
                             </div>
 
@@ -104,10 +107,7 @@
                                     <div class="info-card">
                                         <h3>Description</h3>
                                         <p id="ticketDescription">
-                                            After the recent system update, I'm unable to login to my account. 
-                                            I keep getting an "Invalid credentials" error even though I'm sure 
-                                            my password is correct. I've tried resetting my password multiple 
-                                            times but the issue persists.
+                                            Loading ticket description...
                                         </p>
                                     </div>
 
@@ -117,23 +117,23 @@
                                         <div class="details-grid">
                                             <div class="detail-item">
                                                 <label>Customer:</label>
-                                                <span id="customerName">Sarah Johnson</span>
+                                                <span id="customerName">Loading...</span>
                                             </div>
                                             <div class="detail-item">
                                                 <label>Email:</label>
-                                                <span id="customerEmail">sarah.j@example.com</span>
+                                                <span id="customerEmail">Loading...</span>
                                             </div>
                                             <div class="detail-item">
                                                 <label>Created:</label>
-                                                <span id="ticketCreated">June 15, 2023 10:30 AM</span>
+                                                <span id="ticketCreated">Loading...</span>
                                             </div>
                                             <div class="detail-item">
                                                 <label>Last Updated:</label>
-                                                <span id="ticketUpdated">June 16, 2023 02:15 PM</span>
+                                                <span id="ticketUpdated">Loading...</span>
                                             </div>
                                             <div class="detail-item">
                                                 <label>Assigned To:</label>
-                                                <span id="assignedTo">John Doe</span>
+                                                <span id="assignedTo">Loading...</span>
                                             </div>
                                         </div>
                                     </div>
@@ -142,25 +142,9 @@
                                     <div class="info-card">
                                         <h3>Attachments</h3>
                                         <div class="attachments-list" id="attachmentsList">
-                                            <div class="attachment-item">
-                                                <i class="fas fa-file-image"></i>
-                                                <div class="attachment-info">
-                                                    <div class="attachment-name">screenshot.png</div>
-                                                    <div class="attachment-size">2.4 MB</div>
-                                                </div>
-                                                <button class="attachment-download">
-                                                    <i class="fas fa-download"></i>
-                                                </button>
-                                            </div>
-                                            <div class="attachment-item">
-                                                <i class="fas fa-file-text"></i>
-                                                <div class="attachment-info">
-                                                    <div class="attachment-name">error_log.txt</div>
-                                                    <div class="attachment-size">156 KB</div>
-                                                </div>
-                                                <button class="attachment-download">
-                                                    <i class="fas fa-download"></i>
-                                                </button>
+                                            <div class="no-attachments">
+                                                <i class="fas fa-file"></i>
+                                                <p>No attachments</p>
                                             </div>
                                         </div>
                                         <button class="btn btn-outline full-width" style="margin-top: 12px;">
@@ -195,7 +179,7 @@
                                     </div>
 
                                     <!-- Status Update -->
-                                    <div class="info-card">
+                                    <div class="info-card" id="statusUpdateSection">
                                         <h3>Update Status</h3>
                                         <div class="form-group">
                                             <label>Status</label>
@@ -208,9 +192,11 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Add Comment (Optional)</label>
-                                            <textarea class="form-control" placeholder="Add a comment about this status change..." rows="3"></textarea>
+                                            <textarea id="statusComment" class="form-control"
+                                                placeholder="Add a comment about this status change..."
+                                                rows="3"></textarea>
                                         </div>
-                                        <button class="btn btn-primary full-width">
+                                        <button class="btn btn-primary full-width" onclick="updateTicket()">
                                             Update Status
                                         </button>
                                     </div>
@@ -218,45 +204,13 @@
                                     <!-- Activity Timeline -->
                                     <div class="info-card">
                                         <h3>Activity Timeline</h3>
-                                        <div class="timeline">
+                                        <div class="timeline" id="activityTimeline">
                                             <div class="timeline-item">
                                                 <div class="timeline-marker"></div>
                                                 <div class="timeline-content">
-                                                    <div class="timeline-title">Ticket Resolved</div>
-                                                    <div class="timeline-meta">By John Doe • 2 hours ago</div>
-                                                    <div class="timeline-description">Marked ticket as resolved after confirming the fix.</div>
-                                                </div>
-                                            </div>
-                                            <div class="timeline-item">
-                                                <div class="timeline-marker"></div>
-                                                <div class="timeline-content">
-                                                    <div class="timeline-title">Comment Added</div>
-                                                    <div class="timeline-meta">By Sarah Johnson • 4 hours ago</div>
-                                                    <div class="timeline-description">The issue appears to be fixed now. Thank you!</div>
-                                                </div>
-                                            </div>
-                                            <div class="timeline-item">
-                                                <div class="timeline-marker"></div>
-                                                <div class="timeline-content">
-                                                    <div class="timeline-title">Status Updated</div>
-                                                    <div class="timeline-meta">By John Doe • 6 hours ago</div>
-                                                    <div class="timeline-description">Changed status to In Progress</div>
-                                                </div>
-                                            </div>
-                                            <div class="timeline-item">
-                                                <div class="timeline-marker"></div>
-                                                <div class="timeline-content">
-                                                    <div class="timeline-title">Ticket Assigned</div>
-                                                    <div class="timeline-meta">By System • 1 day ago</div>
-                                                    <div class="timeline-description">Assigned to John Doe</div>
-                                                </div>
-                                            </div>
-                                            <div class="timeline-item">
-                                                <div class="timeline-marker"></div>
-                                                <div class="timeline-content">
-                                                    <div class="timeline-title">Ticket Created</div>
-                                                    <div class="timeline-meta">By Sarah Johnson • 1 day ago</div>
-                                                    <div class="timeline-description">Initial ticket submission</div>
+                                                    <div class="timeline-title">Loading activity...</div>
+                                                    <div class="timeline-meta">Please wait</div>
+                                                    <div class="timeline-description">Loading timeline data</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -272,13 +226,14 @@
 
     <script src="assets/js/UI.js"></script>
     <script src="assets/js/ticketAPI.js"></script>
-    
+
     <script>
         let currentTicket = null;
+        let currentUser = null;
 
         // Navigation functions
         function goBack() {
-            window.history.back();
+            window.location.href = 'view-tickets.html';
         }
 
         function logout() {
@@ -289,41 +244,98 @@
         // Load ticket details on page load
         window.addEventListener('DOMContentLoaded', async () => {
             // Check authentication
-            const user = localStorage.getItem('supportFlowUser');
-            if (!user) {
+            const userData = localStorage.getItem('supportFlowUser');
+            if (!userData) {
                 window.location.href = 'index.html';
                 return;
             }
 
+            currentUser = JSON.parse(userData);
             await loadTicketDetails();
+            setupRoleBasedUI();
         });
 
         async function loadTicketDetails() {
             const urlParams = new URLSearchParams(window.location.search);
             const ticketId = urlParams.get('id');
 
-            if (!ticketId) {
-                UI.flashMessage('No ticket ID provided', 'error');
+            console.log('URL Params:', window.location.search);
+            console.log('Ticket ID from URL:', ticketId);
+
+            if (!ticketId || ticketId === 'undefined' || ticketId === 'null') {
+                showErrorMessage('No valid ticket ID provided. Redirecting to tickets list.');
+                setTimeout(() => {
+                    window.location.href = 'view-tickets.html';
+                }, 3000);
                 return;
             }
 
             try {
-                currentTicket = await ticketAPI.getTicketById(ticketId);
+                console.log('Fetching ticket with ID:', ticketId);
+                currentTicket = await ticketAPI.getTicket(ticketId);
+                console.log('Ticket loaded successfully:', currentTicket);
                 renderTicketDetails();
             } catch (error) {
-                UI.flashMessage('Error loading ticket details', 'error');
-                console.error('Error:', error);
+                console.error('Error loading ticket:', error);
+                showErrorMessage('Error loading ticket details: ' + error.message);
+                
+                // If ticket not found, redirect back
+                if (error.message.includes('not found') || error.message.includes('Invalid ticket ID')) {
+                    setTimeout(() => {
+                        window.location.href = 'view-tickets.html';
+                    }, 3000);
+                }
             }
         }
 
+        function showErrorMessage(message) {
+            document.querySelector('.ticket-details-container').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h3>Error Loading Ticket</h3>
+                    <p>${message}</p>
+                    <button class="btn btn-primary" onclick="goBack()">Go Back to Tickets</button>
+                </div>
+            `;
+        }
+
+        function setupRoleBasedUI() {
+            if (!currentUser) return;
+
+            const statusSection = document.getElementById('statusUpdateSection');
+            const quickActions = document.querySelector('.actions-card');
+            const updateButton = document.querySelector('button[onclick="updateTicket()"]');
+
+            // Show/hide controls based on role
+            if (currentUser.role === 'user') {
+                // Users can only view, not edit status
+                if (statusSection) statusSection.style.display = 'none';
+                if (quickActions) quickActions.style.display = 'none';
+                if (updateButton) updateButton.style.display = 'none';
+            }
+            // Agents and admins see all controls
+
+            // Update user info in sidebar
+            const userAvatar = document.querySelector('.user-avatar');
+            const userName = document.querySelector('.user-name');
+            const userRole = document.querySelector('.user-role');
+
+            if (userAvatar) userAvatar.textContent = currentUser.name.substring(0, 2).toUpperCase();
+            if (userName) userName.textContent = currentUser.name;
+            if (userRole) userRole.textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+        }
+
         function renderTicketDetails() {
-            if (!currentTicket) return;
+            if (!currentTicket) {
+                showErrorMessage('Ticket not found or could not be loaded.');
+                return;
+            }
 
             document.getElementById('ticketTitle').textContent = currentTicket.title;
             document.getElementById('ticketDescription').textContent = currentTicket.description;
             document.getElementById('customerName').textContent = currentTicket.customerName;
             document.getElementById('customerEmail').textContent = currentTicket.customerEmail;
-            document.getElementById('assignedTo').textContent = currentTicket.assignedTo;
+            document.getElementById('assignedTo').textContent = currentTicket.assignedTo || 'Unassigned';
+            document.getElementById('ticketIdDisplay').textContent = `#${currentTicket._id.substring(0, 8)}`;
 
             // Format dates
             const createdDate = new Date(currentTicket.createdAt);
@@ -342,37 +354,116 @@
 
             // Set status select
             document.getElementById('statusSelect').value = currentTicket.status;
+
+            // Update activity timeline
+            updateActivityTimeline();
         }
 
-        function updateTicket() {
-            if (!currentTicket) return;
+        function updateActivityTimeline() {
+            const timeline = document.getElementById('activityTimeline');
+            if (!timeline || !currentTicket) return;
+
+            const activities = [
+                {
+                    title: 'Ticket Created',
+                    meta: `By ${currentTicket.customerName} • ${new Date(currentTicket.createdAt).toLocaleString()}`,
+                    description: 'Initial ticket submission'
+                }
+            ];
+
+            if (currentTicket.updatedAt !== currentTicket.createdAt) {
+                activities.unshift({
+                    title: 'Ticket Updated',
+                    meta: `By System • ${new Date(currentTicket.updatedAt).toLocaleString()}`,
+                    description: 'Ticket information was updated'
+                });
+            }
+
+            timeline.innerHTML = activities.map(activity => `
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">${activity.title}</div>
+                        <div class="timeline-meta">${activity.meta}</div>
+                        <div class="timeline-description">${activity.description}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function updateTicket() {
+            if (!currentTicket || !currentUser) return;
+
+            // Check if user has permission to update status
+            if (currentUser.role === 'user') {
+                UI.notify('Access denied. Only agents and admins can update ticket status.', 'error');
+                return;
+            }
 
             const newStatus = document.getElementById('statusSelect').value;
-            
-            // In a real app, this would call your API
-            // await ticketAPI.updateTicket(currentTicket.id, { status: newStatus });
-            
-            currentTicket.status = newStatus;
-            renderTicketDetails();
-            
-            UI.flashMessage('Ticket updated successfully!', 'success');
+            const comment = document.getElementById('statusComment').value;
+
+            try {
+                // Update ticket via API
+                await ticketAPI.updateTicket(currentTicket._id, { status: newStatus });
+                
+                currentTicket.status = newStatus;
+                currentTicket.updatedAt = new Date().toISOString();
+                renderTicketDetails();
+                
+                // Clear comment
+                document.getElementById('statusComment').value = '';
+                
+                UI.notify('Ticket updated successfully!', 'success');
+            } catch (error) {
+                UI.notify('Error updating ticket: ' + error.message, 'error');
+                console.error('Error:', error);
+            }
         }
 
         function changeStatus() {
+            if (currentUser && currentUser.role === 'user') {
+                UI.notify('Access denied. Only agents and admins can change ticket status.', 'error');
+                return;
+            }
             document.getElementById('statusSelect').focus();
         }
 
-        function assignToMe() {
-            const user = JSON.parse(localStorage.getItem('supportFlowUser'));
-            if (user) {
-                currentTicket.assignedTo = user.name;
+        async function assignToMe() {
+            if (!currentUser || !currentTicket) return;
+
+            // Check if user has permission to assign tickets
+            if (currentUser.role !== 'admin' && currentUser.role !== 'agent') {
+                UI.notify('Access denied. Only agents and admins can assign tickets.', 'error');
+                return;
+            }
+
+            try {
+                await ticketAPI.assignTicket(currentTicket._id, {
+                    agentId: currentUser.id,
+                    agentName: currentUser.name
+                });
+                
+                currentTicket.assignedTo = currentUser.name;
+                currentTicket.assignedAgent = currentUser.id;
+                currentTicket.status = 'In Progress';
+                currentTicket.updatedAt = new Date().toISOString();
                 renderTicketDetails();
-                UI.flashMessage('Ticket assigned to you!', 'success');
+                
+                UI.notify('Ticket assigned to you!', 'success');
+            } catch (error) {
+                UI.notify('Error assigning ticket: ' + error.message, 'error');
+                console.error('Error:', error);
             }
         }
 
         function addInternalNote() {
-            UI.createModal(
+            if (!currentUser || currentUser.role === 'user') {
+                UI.notify('Access denied. Only agents and admins can add internal notes.', 'error');
+                return;
+            }
+
+            const modal = UI.createModal(
                 'Add Internal Note',
                 `
                 <div class="form-group">
@@ -401,11 +492,11 @@
         }
 
         function addNote() {
-            UI.flashMessage('Internal note added!', 'success');
+            UI.notify('Internal note added!', 'success');
         }
 
         function requestInfo() {
-            UI.createModal(
+            const modal = UI.createModal(
                 'Request Information',
                 `
                 <div class="form-group">
@@ -429,7 +520,7 @@
         }
 
         function sendInfoRequest() {
-            UI.flashMessage('Information request sent to customer!', 'success');
+            UI.notify('Information request sent to customer!', 'success');
         }
 
         function printTicket() {
@@ -473,12 +564,23 @@
             flex-wrap: wrap;
         }
 
-        .status-badge, .priority-badge, .category-badge {
+        .status-badge,
+        .priority-badge,
+        .category-badge {
             padding: 8px 16px;
             border-radius: 50px;
             font-size: 14px;
             font-weight: 600;
         }
+
+        .status-open { background: #e3f2fd; color: #1976d2; }
+        .status-inprogress { background: #fff3e0; color: #f57c00; }
+        .status-resolved { background: #e8f5e8; color: #2e7d32; }
+        .status-closed { background: #f5f5f5; color: #616161; }
+
+        .priority-low { background: #e8f5e8; color: #2e7d32; }
+        .priority-medium { background: #fff3e0; color: #f57c00; }
+        .priority-high { background: #ffebee; color: #c62828; }
 
         .category-badge {
             background: var(--gray-light);
@@ -533,6 +635,18 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+        }
+
+        .no-attachments {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+        }
+
+        .no-attachments i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
         }
 
         .attachment-item {
@@ -689,12 +803,12 @@
             .ticket-content-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .ticket-header-card {
                 flex-direction: column;
                 align-items: flex-start;
             }
-            
+
             .action-buttons-grid {
                 grid-template-columns: 1fr;
             }
@@ -704,30 +818,34 @@
             .ticket-header-card {
                 padding: 16px;
             }
-            
+
             .ticket-title-section h1 {
                 font-size: 20px;
             }
-            
+
             .info-card {
                 padding: 16px;
             }
         }
 
         @media print {
-            .sidebar, .topbar, .btn {
+
+            .sidebar,
+            .topbar,
+            .btn {
                 display: none !important;
             }
-            
+
             .main-content {
                 margin: 0;
                 padding: 20px;
             }
-            
+
             .ticket-details-container {
                 max-width: none;
             }
         }
     </style>
 </body>
+
 </html>

@@ -1,3 +1,4 @@
+// backend/models/ticket.js
 const mongoose = require("mongoose");
 
 const TicketSchema = new mongoose.Schema({
@@ -23,6 +24,7 @@ const TicketSchema = new mongoose.Schema({
   },
   category: {
     type: String,
+    enum: ["Technical", "Billing", "Feature Request", "General"],
     default: "General"
   },
   customerEmail: { 
@@ -38,6 +40,14 @@ const TicketSchema = new mongoose.Schema({
   assignedTo: {
     type: String,
     trim: true
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  },
+  assignedAgent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
   },
   createdAt: { 
     type: Date, 

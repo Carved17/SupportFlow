@@ -1,4 +1,4 @@
-// frontend/js/UI.js
+// frontend/assets/js/UI.js
 class UI {
     // Error handling methods
     static showError(elementId, message) {
@@ -82,7 +82,14 @@ class UI {
         return emailRegex.test(email);
     }
 
-    // Modal functionality
+    // Flash message functionality (NEW)
+    static flashMessage(message, type = 'success') {
+        console.log(`${type.toUpperCase()}: ${message}`);
+        // Use the existing notify method as fallback
+        this.notify(message, type);
+    }
+
+    // Modal functionality (UPDATED)
     static createModal(title, content, buttons = []) {
         // Remove existing modal
         const existingModal = document.querySelector('.modal-overlay');

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <div class="app-container">
         <!-- Reuse sidebar from index.html -->
@@ -15,7 +17,7 @@
                 <div class="logo-icon">SF</div>
                 <div class="logo-text">SupportFlow</div>
             </div>
-            
+
             <div class="nav-menu">
                 <div class="nav-item" data-page="dashboard">
                     <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -30,7 +32,7 @@
                     <span class="nav-text">View Tickets</span>
                 </div>
             </div>
-            
+
             <div class="user-info">
                 <div class="user-avatar">JD</div>
                 <div class="user-details">
@@ -42,27 +44,27 @@
                 </button>
             </div>
         </div>
-        
+
         <div class="main-content">
             <div class="topbar">
                 <div class="search-bar">
                     <i class="fas fa-search"></i>
                     <input type="text" id="ticketSearch" placeholder="Search tickets...">
                 </div>
-                
+
                 <div class="topbar-actions">
                     <div class="notification-icon">
                         <i class="far fa-bell"></i>
                         <div class="notification-badge">3</div>
                     </div>
-                    
+
                     <div class="user-menu">
                         <div class="user-menu-avatar">JD</div>
                         <i class="fas fa-chevron-down"></i>
                     </div>
                 </div>
             </div>
-            
+
             <div class="content">
                 <div class="page active">
                     <div class="page-header">
@@ -125,7 +127,7 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <!-- Tickets Table -->
                     <div class="tickets-table">
                         <div class="table-header">
@@ -144,12 +146,12 @@
                                 </select>
                             </div>
                         </div>
-                        
+
                         <!-- Grid View -->
                         <div id="ticketsGridView" class="tickets-grid">
                             <!-- Tickets will be loaded here -->
                         </div>
-                        
+
                         <!-- List View -->
                         <div id="ticketsListView" class="tickets-list" style="display: none;">
                             <table>
@@ -170,7 +172,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <!-- Pagination -->
                         <div class="pagination" id="pagination">
                             <!-- Pagination will be generated here -->
@@ -181,9 +183,10 @@
         </div>
     </div>
 
-    <script src="JS/UI.js"></script>
-    <script src="JS/ticketAPI.js"></script>
-    
+    <script src="assets/js/UI.js"></script>
+    <script src="assets/js/ticketAPI.js"></script>
+    <script src="assets/js/main.js"></script>
+
     <script>
         let allTickets = [];
         let currentPage = 1;
@@ -226,17 +229,16 @@
 
         async function loadTickets() {
             try {
-                allTickets = await ticketAPI.getTickets();
-                applyFilters();
+                const tickets = await ticketAPI.getTickets();
+                // Display tickets...
             } catch (error) {
-                console.error('Error loading tickets:', error);
-                UI.flashMessage('Error loading tickets', 'error');
+                UI.notify('Error loading tickets: ' + error.message, 'error');
             }
         }
 
         function setupEventListeners() {
             // Search
-            document.getElementById('ticketSearch').addEventListener('input', 
+            document.getElementById('ticketSearch').addEventListener('input',
                 UI.debounce((e) => {
                     currentFilters.search = e.target.value;
                     applyFilters();
@@ -284,7 +286,7 @@
             // Apply search filter
             if (currentFilters.search) {
                 const searchTerm = currentFilters.search.toLowerCase();
-                filteredTickets = filteredTickets.filter(ticket => 
+                filteredTickets = filteredTickets.filter(ticket =>
                     ticket.title.toLowerCase().includes(searchTerm) ||
                     ticket.description.toLowerCase().includes(searchTerm) ||
                     ticket.customerEmail.toLowerCase().includes(searchTerm) ||
@@ -294,27 +296,27 @@
 
             // Apply status filter
             if (currentFilters.status !== 'all') {
-                filteredTickets = filteredTickets.filter(ticket => 
+                filteredTickets = filteredTickets.filter(ticket =>
                     ticket.status === currentFilters.status
                 );
             }
 
             // Apply priority filter
             if (currentFilters.priority !== 'all') {
-                filteredTickets = filteredTickets.filter(ticket => 
+                filteredTickets = filteredTickets.filter(ticket =>
                     ticket.priority === currentFilters.priority
                 );
             }
 
             // Apply category filter
             if (currentFilters.category !== 'all') {
-                filteredTickets = filteredTickets.filter(ticket => 
+                filteredTickets = filteredTickets.filter(ticket =>
                     ticket.category === currentFilters.category
                 );
             }
 
             // Apply sorting
-            switch(currentFilters.sort) {
+            switch (currentFilters.sort) {
                 case 'newest':
                     filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     break;
@@ -356,7 +358,7 @@
 
         function renderGridView(tickets) {
             const container = document.getElementById('ticketsGridView');
-            
+
             if (tickets.length === 0) {
                 container.innerHTML = `
                     <div class="no-tickets">
@@ -406,7 +408,7 @@
 
         function renderListView(tickets) {
             const container = document.getElementById('ticketsTableBody');
-            
+
             if (tickets.length === 0) {
                 container.innerHTML = `
                     <tr>
@@ -461,14 +463,14 @@
 
         function renderPagination(totalPages) {
             const container = document.getElementById('pagination');
-            
+
             if (totalPages <= 1) {
                 container.innerHTML = '';
                 return;
             }
 
             let paginationHTML = '';
-            
+
             // Previous button
             paginationHTML += `
                 <button class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}" 
@@ -511,7 +513,7 @@
         function toggleViewMode() {
             const gridView = document.getElementById('ticketsGridView');
             const listView = document.getElementById('ticketsListView');
-            
+
             if (currentView === 'grid') {
                 gridView.style.display = 'grid';
                 listView.style.display = 'none';
@@ -519,7 +521,7 @@
                 gridView.style.display = 'none';
                 listView.style.display = 'block';
             }
-            
+
             applyFilters();
         }
 
@@ -529,7 +531,7 @@
             document.getElementById('filterPriority').value = 'all';
             document.getElementById('filterCategory').value = 'all';
             document.getElementById('sortTickets').value = 'newest';
-            
+
             currentFilters = {
                 status: 'all',
                 priority: 'all',
@@ -537,11 +539,19 @@
                 sort: 'newest',
                 search: ''
             };
-            
+
             applyFilters();
         }
 
-        function viewTicket(ticketId) {
+        // When clicking "View Details" on a ticket
+        function viewTicketDetails(ticketId) {
+            // Make sure ticketId is valid
+            if (!ticketId) {
+                UI.notify('Invalid ticket ID', 'error');
+                return;
+            }
+
+            // Navigate to ticket details with ID
             window.location.href = `ticket-details.html?id=${ticketId}`;
         }
 
@@ -573,4 +583,5 @@
         }
     </script>
 </body>
+
 </html>

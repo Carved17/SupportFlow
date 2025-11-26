@@ -1,3 +1,4 @@
+// backend/server.js
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -22,6 +23,7 @@ connectDB();
 
 // Routes
 app.use("/api/tickets", require("./routes/ticketRoutes"));
+app.use("/api/auth", require("./routes/authRoutes"));
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -33,58 +35,6 @@ app.get("/api/health", (req, res) => {
     database: dbStatus,
     version: "1.0.0"
   });
-});
-
-// Test data initialization endpoint
-app.post("/api/init-data", async (req, res) => {
-  try {
-    const Ticket = require("./models/ticket");
-    
-    // Clear existing tickets
-    await Ticket.deleteMany({});
-    
-    // Insert sample tickets
-    const sampleTickets = [
-      {
-        title: "Login Issue - Cannot access account",
-        description: "Users are unable to login with correct credentials. Getting authentication error.",
-        priority: "High",
-        status: "Open",
-        category: "Technical",
-        customerEmail: "john.doe@example.com",
-        customerName: "John Doe"
-      },
-      {
-        title: "Payment Gateway Error", 
-        description: "Payment transactions are failing during checkout process with error code 500.",
-        priority: "High",
-        status: "In Progress",
-        category: "Billing",
-        customerEmail: "sarah.smith@company.com",
-        customerName: "Sarah Smith"
-      },
-      {
-        title: "Feature Request - Dark Mode",
-        description: "Request to implement dark mode theme for better user experience during night time usage.",
-        priority: "Low", 
-        status: "Open",
-        category: "Feature Request",
-        customerEmail: "alex.rodriguez@user.com",
-        customerName: "Alex Rodriguez"
-      }
-    ];
-    
-    const createdTickets = await Ticket.insertMany(sampleTickets);
-    
-    res.json({
-      message: "Sample data initialized successfully",
-      ticketsCreated: createdTickets.length,
-      tickets: createdTickets
-    });
-    
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 });
 
 // Error handling middleware

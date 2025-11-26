@@ -28,7 +28,7 @@ class SupportFlowApp {
     setupEventListeners() {
         console.log('Setting up event listeners');
         
-        // Login/Register forms
+        // Login/Register forms - SAFELY CHECK IF ELEMENTS EXIST
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
         
@@ -48,12 +48,15 @@ class SupportFlowApp {
             });
         }
 
-        // Navigation
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', (e) => this.handleNavigation(e));
-        });
+        // Navigation - SAFELY CHECK IF ELEMENTS EXIST
+        const navItems = document.querySelectorAll('.nav-item');
+        if (navItems.length > 0) {
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => this.handleNavigation(e));
+            });
+        }
 
-        // Topbar actions
+        // Topbar actions - SAFELY CHECK IF ELEMENTS EXIST
         const createTicketBtn = document.getElementById('createTicketBtn');
         const backToDashboardBtn = document.getElementById('backToDashboardBtn');
         const notificationBell = document.getElementById('notificationBell');
@@ -95,7 +98,7 @@ class SupportFlowApp {
             });
         }
 
-        // Global search
+        // Global search - SAFELY CHECK IF ELEMENT EXISTS
         const globalSearch = document.getElementById('globalSearch');
         if (globalSearch) {
             globalSearch.addEventListener('input', 
@@ -107,7 +110,7 @@ class SupportFlowApp {
             );
         }
         
-        // Dashboard filters
+        // Dashboard filters - SAFELY CHECK IF ELEMENTS EXIST
         const statusFilter = document.getElementById('statusFilter');
         const sortBy = document.getElementById('sortBy');
 
@@ -125,7 +128,7 @@ class SupportFlowApp {
             });
         }
 
-        // Create ticket form
+        // Create ticket form - SAFELY CHECK IF ELEMENTS EXIST
         const createTicketForm = document.getElementById('createTicketForm');
         const resetFormBtn = document.getElementById('resetFormBtn');
 
@@ -144,14 +147,16 @@ class SupportFlowApp {
             });
         }
 
-        // File upload
+        // File upload - SAFELY CHECK IF ELEMENTS EXIST
         const fileUploadArea = document.getElementById('fileUploadArea');
         const ticketAttachment = document.getElementById('ticketAttachment');
 
         if (fileUploadArea) {
             fileUploadArea.addEventListener('click', () => {
                 console.log('File upload area clicked');
-                ticketAttachment.click();
+                if (ticketAttachment) {
+                    ticketAttachment.click();
+                }
             });
         }
 
@@ -162,7 +167,7 @@ class SupportFlowApp {
             });
         }
 
-        // View tickets page buttons
+        // View tickets page buttons - SAFELY CHECK IF ELEMENTS EXIST
         const newTicketBtn = document.getElementById('newTicketBtn');
         const exportTicketsBtn = document.getElementById('exportTicketsBtn');
         const clearFiltersBtn = document.getElementById('clearFiltersBtn');
@@ -188,7 +193,7 @@ class SupportFlowApp {
             });
         }
 
-        // View tickets filters
+        // View tickets filters - SAFELY CHECK IF ELEMENTS EXIST
         const viewFilterStatus = document.getElementById('viewFilterStatus');
         const viewFilterPriority = document.getElementById('viewFilterPriority');
         const viewFilterCategory = document.getElementById('viewFilterCategory');
@@ -245,24 +250,31 @@ class SupportFlowApp {
             });
         }
 
-        // Tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabName = tab.getAttribute('data-tab');
-                console.log('Tab clicked:', tabName);
-                
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('active');
+        // Tab switching - SAFELY CHECK IF ELEMENTS EXIST
+        const tabs = document.querySelectorAll('.tab');
+        if (tabs.length > 0) {
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.getAttribute('data-tab');
+                    console.log('Tab clicked:', tabName);
+                    
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    const tabContent = document.getElementById(`${tabName}-tab`);
+                    if (tabContent) {
+                        tabContent.classList.add('active');
+                    }
+                    
+                    UI.hideError('loginError');
+                    UI.hideError('registerError');
                 });
-                document.getElementById(`${tabName}-tab`).classList.add('active');
-                
-                UI.hideError('loginError');
-                UI.hideError('registerError');
             });
-        });
+        }
 
         console.log('All event listeners set up successfully');
     }
@@ -280,14 +292,24 @@ class SupportFlowApp {
     }
 
     showLogin() {
-        document.getElementById('loginScreen').style.display = 'flex';
-        document.getElementById('appContainer').style.display = 'none';
+        // SAFELY CHECK IF ELEMENTS EXIST
+        const loginScreen = document.getElementById('loginScreen');
+        const appContainer = document.getElementById('appContainer');
+        
+        if (loginScreen) loginScreen.style.display = 'flex';
+        if (appContainer) appContainer.style.display = 'none';
+        
         console.log('Showing login screen');
     }
 
     showApp() {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('appContainer').style.display = 'flex';
+        // SAFELY CHECK IF ELEMENTS EXIST
+        const loginScreen = document.getElementById('loginScreen');
+        const appContainer = document.getElementById('appContainer');
+        
+        if (loginScreen) loginScreen.style.display = 'none';
+        if (appContainer) appContainer.style.display = 'flex';
+        
         this.updateUserInfo();
         this.loadDashboard();
         console.log('Showing app');
@@ -296,24 +318,41 @@ class SupportFlowApp {
     updateUserInfo() {
         if (this.currentUser) {
             const initials = this.currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
-            document.getElementById('userAvatar').textContent = initials;
-            document.getElementById('topbarUserAvatar').textContent = initials;
-            document.getElementById('userName').textContent = this.currentUser.name;
-            document.getElementById('userRole').textContent = this.currentUser.role === 'admin' ? 'Administrator' : 'Support Agent';
-            document.getElementById('welcomeUserName').textContent = this.currentUser.name.split(' ')[0];
+            
+            // SAFELY UPDATE ELEMENTS IF THEY EXIST
+            const userAvatar = document.getElementById('userAvatar');
+            const topbarUserAvatar = document.getElementById('topbarUserAvatar');
+            const userName = document.getElementById('userName');
+            const userRole = document.getElementById('userRole');
+            const welcomeUserName = document.getElementById('welcomeUserName');
+            
+            if (userAvatar) userAvatar.textContent = initials;
+            if (topbarUserAvatar) topbarUserAvatar.textContent = initials;
+            if (userName) userName.textContent = this.currentUser.name;
+            if (userRole) userRole.textContent = this.currentUser.role === 'admin' ? 'Administrator' : 'Support Agent';
+            if (welcomeUserName) welcomeUserName.textContent = this.currentUser.name.split(' ')[0];
+            
             console.log('User info updated:', this.currentUser);
         }
     }
 
     async handleLogin(e) {
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
+        const emailInput = document.getElementById('loginEmail');
+        const passwordInput = document.getElementById('loginPassword');
+        
+        if (!emailInput || !passwordInput) {
+            console.error('Login form elements not found');
+            return;
+        }
+
+        const email = emailInput.value;
+        const password = passwordInput.value;
 
         UI.hideError('loginError');
 
         try {
             const submitBtn = document.getElementById('loginSubmitBtn');
-            UI.showLoading(submitBtn, 'Signing in...');
+            if (submitBtn) UI.showLoading(submitBtn, 'Signing in...');
 
             const user = await ticketAPI.login(email, password);
             this.currentUser = user;
@@ -324,15 +363,26 @@ class SupportFlowApp {
         } catch (error) {
             UI.showError('loginError', error.message);
         } finally {
-            UI.hideLoading(document.getElementById('loginSubmitBtn'));
+            const submitBtn = document.getElementById('loginSubmitBtn');
+            if (submitBtn) UI.hideLoading(submitBtn);
         }
     }
 
     async handleRegister(e) {
-        const name = document.getElementById('registerName').value;
-        const email = document.getElementById('registerEmail').value;
-        const password = document.getElementById('registerPassword').value;
-        const confirmPassword = document.getElementById('registerConfirmPassword').value;
+        const nameInput = document.getElementById('registerName');
+        const emailInput = document.getElementById('registerEmail');
+        const passwordInput = document.getElementById('registerPassword');
+        const confirmPasswordInput = document.getElementById('registerConfirmPassword');
+        
+        if (!nameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
+            console.error('Register form elements not found');
+            return;
+        }
+
+        const name = nameInput.value;
+        const email = emailInput.value;
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
 
         UI.hideError('registerError');
 
@@ -359,7 +409,7 @@ class SupportFlowApp {
 
         try {
             const submitBtn = document.getElementById('registerSubmitBtn');
-            UI.showLoading(submitBtn, 'Creating account...');
+            if (submitBtn) UI.showLoading(submitBtn, 'Creating account...');
 
             const user = await ticketAPI.register(name, email, password);
             this.currentUser = user;
@@ -370,7 +420,8 @@ class SupportFlowApp {
         } catch (error) {
             UI.showError('registerError', error.message);
         } finally {
-            UI.hideLoading(document.getElementById('registerSubmitBtn'));
+            const submitBtn = document.getElementById('registerSubmitBtn');
+            if (submitBtn) UI.hideLoading(submitBtn);
         }
     }
 
@@ -382,54 +433,52 @@ class SupportFlowApp {
         console.log('User logged out');
     }
 
-// IN YOUR main.js - UPDATE THE handleNavigation METHOD:
-
-handleNavigation(e) {
-    const target = e.currentTarget;
-    const page = target.getAttribute('data-page');
-    
-    console.log('Navigation clicked:', page, 'User role:', this.currentUser?.role);
-    
-    // Check admin access for admin dashboard
-    if (page === 'admin-dashboard') {
-        if (!this.currentUser) {
-            UI.showError('globalError', 'Please login first.');
-            console.log('No user logged in');
+    handleNavigation(e) {
+        const target = e.currentTarget;
+        const page = target.getAttribute('data-page');
+        
+        console.log('Navigation clicked:', page, 'User role:', this.currentUser?.role);
+        
+        // Check admin access for admin dashboard
+        if (page === 'admin-dashboard') {
+            if (!this.currentUser) {
+                UI.showError('globalError', 'Please login first.');
+                console.log('No user logged in');
+                
+                // Don't proceed with navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                // Re-activate the current active item or default to dashboard
+                const activeItem = document.querySelector('.nav-item[data-page="dashboard"]');
+                if (activeItem) activeItem.classList.add('active');
+                return;
+            }
             
-            // Don't proceed with navigation
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            // Re-activate the current active item or default to dashboard
-            const activeItem = document.querySelector('.nav-item[data-page="dashboard"]');
-            if (activeItem) activeItem.classList.add('active');
-            return;
+            if (this.currentUser.role !== 'admin') {
+                UI.showError('globalError', 'Access denied. Admin privileges required.');
+                console.log('Admin access denied for user role:', this.currentUser.role);
+                
+                // Don't proceed with navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                // Re-activate the current active item
+                const activeItem = document.querySelector('.nav-item[data-page="dashboard"]');
+                if (activeItem) activeItem.classList.add('active');
+                return;
+            }
         }
         
-        if (this.currentUser.role !== 'admin') {
-            UI.showError('globalError', 'Access denied. Admin privileges required.');
-            console.log('Admin access denied for user role:', this.currentUser.role);
-            
-            // Don't proceed with navigation
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            // Re-activate the current active item
-            const activeItem = document.querySelector('.nav-item[data-page="dashboard"]');
-            if (activeItem) activeItem.classList.add('active');
-            return;
-        }
+        // Update active nav item
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        target.classList.add('active');
+        
+        // Navigate to page
+        this.navigateToPage(page);
     }
-    
-    // Update active nav item
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    target.classList.add('active');
-    
-    // Navigate to page
-    this.navigateToPage(page);
-}
 
     navigateToPage(page) {
         console.log('Navigating to page:', page);
@@ -487,16 +536,27 @@ handleNavigation(e) {
         const resolvedTickets = this.tickets.filter(t => t.status === 'Resolved').length;
         const totalTickets = this.tickets.length;
 
-        document.getElementById('openTicketsCount').textContent = openTickets;
-        document.getElementById('progressTicketsCount').textContent = progressTickets;
-        document.getElementById('resolvedTicketsCount').textContent = resolvedTickets;
-        document.getElementById('totalTicketsCount').textContent = totalTickets;
+        // SAFELY UPDATE STATS IF ELEMENTS EXIST
+        const openTicketsCount = document.getElementById('openTicketsCount');
+        const progressTicketsCount = document.getElementById('progressTicketsCount');
+        const resolvedTicketsCount = document.getElementById('resolvedTicketsCount');
+        const totalTicketsCount = document.getElementById('totalTicketsCount');
+
+        if (openTicketsCount) openTicketsCount.textContent = openTickets;
+        if (progressTicketsCount) progressTicketsCount.textContent = progressTickets;
+        if (resolvedTicketsCount) resolvedTicketsCount.textContent = resolvedTickets;
+        if (totalTicketsCount) totalTicketsCount.textContent = totalTickets;
 
         console.log('Stats updated - Open:', openTickets, 'In Progress:', progressTickets, 'Resolved:', resolvedTickets, 'Total:', totalTickets);
     }
 
     renderRecentTickets() {
         const container = document.getElementById('ticketsGrid');
+        if (!container) {
+            console.log('Tickets grid container not found');
+            return;
+        }
+
         const filteredTickets = this.applyFilters();
         
         if (filteredTickets.length === 0) {
@@ -512,9 +572,9 @@ handleNavigation(e) {
         }
 
         container.innerHTML = filteredTickets.slice(0, 6).map(ticket => `
-            <div class="ticket-card" onclick="app.viewTicket('${ticket.id}')">
+            <div class="ticket-card" onclick="app.viewTicket('${ticket._id || ticket.id}')">
                 <div class="ticket-header">
-                    <div class="ticket-id">#${ticket.id}</div>
+                    <div class="ticket-id">#${ticket._id ? ticket._id.substring(0, 8) : ticket.id}</div>
                     <div class="ticket-priority priority-${ticket.priority.toLowerCase()}">${ticket.priority}</div>
                 </div>
                 <div class="ticket-title">${ticket.title}</div>
@@ -525,10 +585,10 @@ handleNavigation(e) {
                 </div>
                 <div class="ticket-status status-${ticket.status.toLowerCase().replace(' ', '')}">${ticket.status}</div>
                 <div class="ticket-actions">
-                    <button class="action-btn action-view" onclick="event.stopPropagation(); app.viewTicket('${ticket.id}')">
+                    <button class="action-btn action-view" onclick="event.stopPropagation(); app.viewTicket('${ticket._id || ticket.id}')">
                         <i class="fas fa-eye"></i> View
                     </button>
-                    <button class="action-btn action-edit" onclick="event.stopPropagation(); app.editTicket('${ticket.id}')">
+                    <button class="action-btn action-edit" onclick="event.stopPropagation(); app.editTicket('${ticket._id || ticket.id}')">
                         <i class="fas fa-edit"></i> Edit
                     </button>
                 </div>
@@ -548,7 +608,8 @@ handleNavigation(e) {
                 ticket.title.toLowerCase().includes(searchTerm) ||
                 ticket.description.toLowerCase().includes(searchTerm) ||
                 ticket.customerEmail.toLowerCase().includes(searchTerm) ||
-                ticket.id.toLowerCase().includes(searchTerm)
+                (ticket._id && ticket._id.toLowerCase().includes(searchTerm)) ||
+                (ticket.id && ticket.id.toLowerCase().includes(searchTerm))
             );
         }
 
@@ -596,11 +657,13 @@ handleNavigation(e) {
     }
 
     renderFilteredTickets(tickets) {
-        const totalTickets = tickets.length;
-        document.getElementById('ticketsCount').textContent = totalTickets;
+        const ticketsCount = document.getElementById('ticketsCount');
+        if (ticketsCount) {
+            ticketsCount.textContent = tickets.length;
+        }
 
         // Calculate pagination
-        const totalPages = Math.ceil(totalTickets / this.itemsPerPage);
+        const totalPages = Math.ceil(tickets.length / this.itemsPerPage);
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         const endIndex = startIndex + this.itemsPerPage;
         const paginatedTickets = tickets.slice(startIndex, endIndex);
@@ -617,6 +680,10 @@ handleNavigation(e) {
 
     renderGridView(tickets) {
         const container = document.getElementById('ticketsGridView');
+        if (!container) {
+            console.log('Grid view container not found');
+            return;
+        }
         
         if (tickets.length === 0) {
             container.innerHTML = `
@@ -631,9 +698,9 @@ handleNavigation(e) {
         }
 
         container.innerHTML = tickets.map(ticket => `
-            <div class="ticket-card" onclick="app.viewTicket('${ticket.id}')">
+            <div class="ticket-card" onclick="app.viewTicket('${ticket._id || ticket.id}')">
                 <div class="ticket-header">
-                    <div class="ticket-id">#${ticket.id}</div>
+                    <div class="ticket-id">#${ticket._id ? ticket._id.substring(0, 8) : ticket.id}</div>
                     <div class="ticket-priority priority-${ticket.priority.toLowerCase()}">
                         ${ticket.priority}
                     </div>
@@ -651,13 +718,13 @@ handleNavigation(e) {
                     <span class="ticket-category">${ticket.category || 'General'}</span>
                 </div>
                 <div class="ticket-actions">
-                    <button class="action-btn action-view" onclick="event.stopPropagation(); app.viewTicket('${ticket.id}')">
+                    <button class="action-btn action-view" onclick="event.stopPropagation(); app.viewTicket('${ticket._id || ticket.id}')">
                         <i class="fas fa-eye"></i> View
                     </button>
-                    <button class="action-btn action-edit" onclick="event.stopPropagation(); app.editTicket('${ticket.id}')">
+                    <button class="action-btn action-edit" onclick="event.stopPropagation(); app.editTicket('${ticket._id || ticket.id}')">
                         <i class="fas fa-edit"></i> Edit
                     </button>
-                    <button class="action-btn action-resolve" onclick="event.stopPropagation(); app.resolveTicket('${ticket.id}')">
+                    <button class="action-btn action-resolve" onclick="event.stopPropagation(); app.resolveTicket('${ticket._id || ticket.id}')">
                         <i class="fas fa-check"></i> Resolve
                     </button>
                 </div>
@@ -667,6 +734,10 @@ handleNavigation(e) {
 
     renderListView(tickets) {
         const container = document.getElementById('ticketsTableBody');
+        if (!container) {
+            console.log('List view container not found');
+            return;
+        }
         
         if (tickets.length === 0) {
             container.innerHTML = `
@@ -685,7 +756,7 @@ handleNavigation(e) {
 
         container.innerHTML = tickets.map(ticket => `
             <tr>
-                <td>#${ticket.id}</td>
+                <td>#${ticket._id ? ticket._id.substring(0, 8) : ticket.id}</td>
                 <td>
                     <div class="ticket-title">${ticket.title}</div>
                     <div class="ticket-description">${UI.truncateText(ticket.description, 50)}</div>
@@ -705,13 +776,13 @@ handleNavigation(e) {
                 <td>${UI.formatDate(ticket.createdAt)}</td>
                 <td>
                     <div class="action-buttons">
-                        <button class="action-btn action-view" onclick="app.viewTicket('${ticket.id}')">
+                        <button class="action-btn action-view" onclick="app.viewTicket('${ticket._id || ticket.id}')">
                             <i class="fas fa-eye"></i>
                         </button>
-                        <button class="action-btn action-edit" onclick="app.editTicket('${ticket.id}')">
+                        <button class="action-btn action-edit" onclick="app.editTicket('${ticket._id || ticket.id}')">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="action-btn action-resolve" onclick="app.resolveTicket('${ticket.id}')">
+                        <button class="action-btn action-resolve" onclick="app.resolveTicket('${ticket._id || ticket.id}')">
                             <i class="fas fa-check"></i>
                         </button>
                     </div>
@@ -722,6 +793,10 @@ handleNavigation(e) {
 
     renderPagination(totalPages) {
         const container = document.getElementById('pagination');
+        if (!container) {
+            console.log('Pagination container not found');
+            return;
+        }
         
         if (totalPages <= 1) {
             container.innerHTML = '';
@@ -774,24 +849,33 @@ handleNavigation(e) {
         const gridView = document.getElementById('ticketsGridView');
         const listView = document.getElementById('ticketsListView');
         
-        if (this.currentView === 'grid') {
-            gridView.style.display = 'grid';
-            listView.style.display = 'none';
-        } else {
-            gridView.style.display = 'none';
-            listView.style.display = 'block';
+        if (gridView && listView) {
+            if (this.currentView === 'grid') {
+                gridView.style.display = 'grid';
+                listView.style.display = 'none';
+            } else {
+                gridView.style.display = 'none';
+                listView.style.display = 'block';
+            }
+            
+            this.applyFilters();
+            console.log('View mode toggled to:', this.currentView);
         }
-        
-        this.applyFilters();
-        console.log('View mode toggled to:', this.currentView);
     }
 
     clearFilters() {
-        document.getElementById('globalSearch').value = '';
-        document.getElementById('viewFilterStatus').value = 'all';
-        document.getElementById('viewFilterPriority').value = 'all';
-        document.getElementById('viewFilterCategory').value = 'all';
-        document.getElementById('viewSortTickets').value = 'newest';
+        // SAFELY CLEAR FILTERS
+        const globalSearch = document.getElementById('globalSearch');
+        const viewFilterStatus = document.getElementById('viewFilterStatus');
+        const viewFilterPriority = document.getElementById('viewFilterPriority');
+        const viewFilterCategory = document.getElementById('viewFilterCategory');
+        const viewSortTickets = document.getElementById('viewSortTickets');
+        
+        if (globalSearch) globalSearch.value = '';
+        if (viewFilterStatus) viewFilterStatus.value = 'all';
+        if (viewFilterPriority) viewFilterPriority.value = 'all';
+        if (viewFilterCategory) viewFilterCategory.value = 'all';
+        if (viewSortTickets) viewSortTickets.value = 'newest';
         
         this.currentFilters = {
             status: 'all',
@@ -806,11 +890,22 @@ handleNavigation(e) {
     }
 
     async handleCreateTicket(e) {
-        const title = document.getElementById('ticketTitle').value;
-        const description = document.getElementById('ticketDescription').value;
-        const priority = document.getElementById('ticketPriority').value;
-        const category = document.getElementById('ticketCategory').value;
-        const customerEmail = document.getElementById('customerEmail').value;
+        const titleInput = document.getElementById('ticketTitle');
+        const descriptionInput = document.getElementById('ticketDescription');
+        const priorityInput = document.getElementById('ticketPriority');
+        const categoryInput = document.getElementById('ticketCategory');
+        const customerEmailInput = document.getElementById('customerEmail');
+        
+        if (!titleInput || !descriptionInput || !priorityInput || !categoryInput || !customerEmailInput) {
+            console.error('Create ticket form elements not found');
+            return;
+        }
+
+        const title = titleInput.value;
+        const description = descriptionInput.value;
+        const priority = priorityInput.value;
+        const category = categoryInput.value;
+        const customerEmail = customerEmailInput.value;
 
         // Clear previous errors
         document.querySelectorAll('.form-error').forEach(el => {
@@ -819,29 +914,34 @@ handleNavigation(e) {
 
         // Validation
         if (!title) {
-            document.getElementById('titleError').textContent = 'Title is required';
+            const titleError = document.getElementById('titleError');
+            if (titleError) titleError.textContent = 'Title is required';
             return;
         }
         if (!description) {
-            document.getElementById('descriptionError').textContent = 'Description is required';
+            const descriptionError = document.getElementById('descriptionError');
+            if (descriptionError) descriptionError.textContent = 'Description is required';
             return;
         }
         if (!priority) {
-            document.getElementById('priorityError').textContent = 'Priority is required';
+            const priorityError = document.getElementById('priorityError');
+            if (priorityError) priorityError.textContent = 'Priority is required';
             return;
         }
         if (!category) {
-            document.getElementById('categoryError').textContent = 'Category is required';
+            const categoryError = document.getElementById('categoryError');
+            if (categoryError) categoryError.textContent = 'Category is required';
             return;
         }
         if (!customerEmail || !UI.isValidEmail(customerEmail)) {
-            document.getElementById('emailError').textContent = 'Valid email is required';
+            const emailError = document.getElementById('emailError');
+            if (emailError) emailError.textContent = 'Valid email is required';
             return;
         }
 
         try {
             const submitBtn = document.getElementById('submitTicketBtn');
-            UI.showLoading(submitBtn, 'Creating ticket...');
+            if (submitBtn) UI.showLoading(submitBtn, 'Creating ticket...');
 
             const ticketData = {
                 title,
@@ -854,7 +954,7 @@ handleNavigation(e) {
 
             const newTicket = await ticketAPI.createTicket(ticketData);
             
-            UI.showSuccess(`Ticket #${newTicket.id} created successfully!`);
+            UI.showSuccess(`Ticket #${newTicket._id ? newTicket._id.substring(0, 8) : newTicket.id} created successfully!`);
             this.resetCreateForm();
             
             // Redirect to dashboard after a delay
@@ -866,13 +966,18 @@ handleNavigation(e) {
         } catch (error) {
             UI.showError('formError', error.message);
         } finally {
-            UI.hideLoading(document.getElementById('submitTicketBtn'));
+            const submitBtn = document.getElementById('submitTicketBtn');
+            if (submitBtn) UI.hideLoading(submitBtn);
         }
     }
 
     resetCreateForm() {
-        document.getElementById('createTicketForm').reset();
-        document.getElementById('fileList').innerHTML = '';
+        const createTicketForm = document.getElementById('createTicketForm');
+        const fileList = document.getElementById('fileList');
+        
+        if (createTicketForm) createTicketForm.reset();
+        if (fileList) fileList.innerHTML = '';
+        
         document.querySelectorAll('.form-error').forEach(el => {
             el.textContent = '';
         });
@@ -882,6 +987,12 @@ handleNavigation(e) {
     handleFileSelect(files) {
         const fileList = document.getElementById('fileList');
         const fileError = document.getElementById('fileError');
+        
+        if (!fileList || !fileError) {
+            console.error('File upload elements not found');
+            return;
+        }
+        
         fileList.innerHTML = '';
         fileError.textContent = '';
 
@@ -912,7 +1023,7 @@ handleNavigation(e) {
     }
 
     async editTicket(ticketId) {
-        const ticket = this.tickets.find(t => t.id === ticketId);
+        const ticket = this.tickets.find(t => t._id === ticketId || t.id === ticketId);
         if (!ticket) return;
 
         console.log('Editing ticket:', ticketId);
@@ -964,11 +1075,20 @@ handleNavigation(e) {
 
     async saveTicketEdit(ticketId) {
         try {
+            const editTitle = document.getElementById('editTitle');
+            const editDescription = document.getElementById('editDescription');
+            const editStatus = document.getElementById('editStatus');
+            const editPriority = document.getElementById('editPriority');
+            
+            if (!editTitle || !editDescription || !editStatus || !editPriority) {
+                throw new Error('Edit form elements not found');
+            }
+
             const updates = {
-                title: document.getElementById('editTitle').value,
-                description: document.getElementById('editDescription').value,
-                status: document.getElementById('editStatus').value,
-                priority: document.getElementById('editPriority').value
+                title: editTitle.value,
+                description: editDescription.value,
+                status: editStatus.value,
+                priority: editPriority.value
             };
 
             await ticketAPI.updateTicket(ticketId, updates);
@@ -1008,8 +1128,10 @@ handleNavigation(e) {
 
     toggleNotifications() {
         const panel = document.getElementById('notificationPanel');
-        panel.classList.toggle('active');
-        console.log('Notifications toggled');
+        if (panel) {
+            panel.classList.toggle('active');
+            console.log('Notifications toggled');
+        }
     }
 
     loadTicketsView() {
@@ -1019,8 +1141,9 @@ handleNavigation(e) {
 
     loadCreateTicket() {
         // Pre-fill email if user is logged in
-        if (this.currentUser) {
-            document.getElementById('customerEmail').value = this.currentUser.email;
+        const customerEmail = document.getElementById('customerEmail');
+        if (customerEmail && this.currentUser) {
+            customerEmail.value = this.currentUser.email;
         }
         console.log('Create ticket page loaded');
     }
@@ -1064,7 +1187,7 @@ handleNavigation(e) {
         container.innerHTML = adminTickets.map(ticket => `
             <div class="ticket-card">
                 <div class="ticket-header">
-                    <div class="ticket-id">#${ticket.id}</div>
+                    <div class="ticket-id">#${ticket._id ? ticket._id.substring(0, 8) : ticket.id}</div>
                     <div class="ticket-priority priority-${ticket.priority.toLowerCase()}">${ticket.priority}</div>
                 </div>
                 <div class="ticket-title">${ticket.title}</div>
@@ -1075,13 +1198,13 @@ handleNavigation(e) {
                 </div>
                 <div class="ticket-status status-${ticket.status.toLowerCase().replace(' ', '')}">${ticket.status}</div>
                 <div class="ticket-actions">
-                    <button class="action-btn action-view" onclick="app.viewTicket('${ticket.id}')">
+                    <button class="action-btn action-view" onclick="app.viewTicket('${ticket._id || ticket.id}')">
                         <i class="fas fa-eye"></i> View
                     </button>
-                    <button class="action-btn action-edit" onclick="app.editTicket('${ticket.id}')">
+                    <button class="action-btn action-edit" onclick="app.editTicket('${ticket._id || ticket.id}')">
                         <i class="fas fa-edit"></i> Edit
                     </button>
-                    <button class="action-btn action-resolve" onclick="app.resolveTicket('${ticket.id}')">
+                    <button class="action-btn action-resolve" onclick="app.resolveTicket('${ticket._id || ticket.id}')">
                         <i class="fas fa-check"></i> Resolve
                     </button>
                 </div>
@@ -1101,14 +1224,26 @@ handleNavigation(e) {
     }
 
     performSearch() {
-        const searchTerm = document.getElementById('advancedSearch').value;
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        const assignedAgent = document.getElementById('assignedAgentFilter').value;
-        const ticketSource = document.getElementById('ticketSourceFilter').value;
-        const rating = document.getElementById('ratingFilter').value;
+        const advancedSearch = document.getElementById('advancedSearch');
+        const startDate = document.getElementById('startDate');
+        const endDate = document.getElementById('endDate');
+        const assignedAgentFilter = document.getElementById('assignedAgentFilter');
+        const ticketSourceFilter = document.getElementById('ticketSourceFilter');
+        const ratingFilter = document.getElementById('ratingFilter');
+        
+        if (!advancedSearch) {
+            console.error('Search elements not found');
+            return;
+        }
 
-        console.log('Performing search:', { searchTerm, startDate, endDate, assignedAgent, ticketSource, rating });
+        const searchTerm = advancedSearch.value;
+        const startDateValue = startDate ? startDate.value : '';
+        const endDateValue = endDate ? endDate.value : '';
+        const assignedAgentValue = assignedAgentFilter ? assignedAgentFilter.value : 'all';
+        const ticketSourceValue = ticketSourceFilter ? ticketSourceFilter.value : 'all';
+        const ratingValue = ratingFilter ? ratingFilter.value : 'all';
+
+        console.log('Performing search:', { searchTerm, startDateValue, endDateValue, assignedAgentValue, ticketSourceValue, ratingValue });
 
         // Implement search logic here
         let results = this.tickets.filter(ticket => {
@@ -1120,20 +1255,21 @@ handleNavigation(e) {
                     ticket.title.toLowerCase().includes(term) ||
                     ticket.description.toLowerCase().includes(term) ||
                     ticket.customerEmail.toLowerCase().includes(term) ||
-                    ticket.id.toLowerCase().includes(term)
+                    (ticket._id && ticket._id.toLowerCase().includes(term)) ||
+                    (ticket.id && ticket.id.toLowerCase().includes(term))
                 );
             }
 
-            if (startDate) {
-                matches = matches && new Date(ticket.createdAt) >= new Date(startDate);
+            if (startDateValue) {
+                matches = matches && new Date(ticket.createdAt) >= new Date(startDateValue);
             }
 
-            if (endDate) {
-                matches = matches && new Date(ticket.createdAt) <= new Date(endDate);
+            if (endDateValue) {
+                matches = matches && new Date(ticket.createdAt) <= new Date(endDateValue);
             }
 
-            if (assignedAgent !== 'all') {
-                matches = matches && ticket.assignedTo === assignedAgent;
+            if (assignedAgentValue !== 'all') {
+                matches = matches && ticket.assignedTo === assignedAgentValue;
             }
 
             return matches;
@@ -1145,6 +1281,11 @@ handleNavigation(e) {
     renderSearchResults(results) {
         const container = document.getElementById('searchResultsGrid');
         const countElement = document.getElementById('resultsCount');
+        
+        if (!container || !countElement) {
+            console.error('Search results elements not found');
+            return;
+        }
 
         countElement.textContent = results.length;
 
@@ -1160,9 +1301,9 @@ handleNavigation(e) {
         }
 
         container.innerHTML = results.map(ticket => `
-            <div class="ticket-card" onclick="app.viewTicket('${ticket.id}')">
+            <div class="ticket-card" onclick="app.viewTicket('${ticket._id || ticket.id}')">
                 <div class="ticket-header">
-                    <div class="ticket-id">#${ticket.id}</div>
+                    <div class="ticket-id">#${ticket._id ? ticket._id.substring(0, 8) : ticket.id}</div>
                     <div class="ticket-priority priority-${ticket.priority.toLowerCase()}">
                         ${ticket.priority}
                     </div>
@@ -1189,6 +1330,7 @@ handleNavigation(e) {
         // Sample tickets data for demo
         this.tickets = [
             {
+                _id: 'TK-1024',
                 id: 'TK-1024',
                 title: 'Login issue after update',
                 description: 'Unable to login after the latest system update. Getting authentication errors.',
@@ -1202,6 +1344,7 @@ handleNavigation(e) {
                 assignedTo: 'John Doe'
             },
             {
+                _id: 'TK-1023',
                 id: 'TK-1023',
                 title: 'Payment gateway not working',
                 description: 'Customers reporting payment failures during checkout process.',
@@ -1215,6 +1358,7 @@ handleNavigation(e) {
                 assignedTo: 'Jane Smith'
             },
             {
+                _id: 'TK-1022',
                 id: 'TK-1022',
                 title: 'Feature request: dark mode',
                 description: 'Request for dark mode theme implementation for better night-time usage.',
@@ -1228,6 +1372,7 @@ handleNavigation(e) {
                 assignedTo: null
             },
             {
+                _id: 'TK-1021',
                 id: 'TK-1021',
                 title: 'Password reset not working',
                 description: 'Password reset emails are not being delivered to users.',
@@ -1241,6 +1386,7 @@ handleNavigation(e) {
                 assignedTo: 'John Doe'
             },
             {
+                _id: 'TK-1020',
                 id: 'TK-1020',
                 title: 'Mobile app crashing on startup',
                 description: 'App immediately crashes when opened on iOS devices running version 16.5.',
@@ -1254,6 +1400,7 @@ handleNavigation(e) {
                 assignedTo: 'Jane Smith'
             },
             {
+                _id: 'TK-1019',
                 id: 'TK-1019',
                 title: 'Billing inquiry',
                 description: 'Question about monthly subscription charges and invoice details.',

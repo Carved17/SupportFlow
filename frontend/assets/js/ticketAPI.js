@@ -1,39 +1,36 @@
-// frontend/js/ticketAPI.js
+// frontend/assets/js/ticketAPI.js
 const API_BASE_URL = 'http://localhost:5000/api';
 
 class TicketAPI {
-    // User authentication (demo - for frontend only)
+    // REAL USER AUTHENTICATION WITH BACKEND
     static async login(email, password) {
         try {
             console.log('🔐 Login attempt:', email);
             
-            // Demo authentication - replace with real backend auth later
-            let role = 'user';
-            let name = email.split('@')[0];
-            
-            if (email === 'admin@support.com' && password === 'password') {
-                role = 'admin';
-                name = 'Admin User';
-            } else if (email === 'agent@support.com' && password === 'password') {
-                role = 'agent';
-                name = 'Support Agent';
-            } else if (email.includes('admin')) {
-                role = 'admin';
-                name = 'Admin ' + name;
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Invalid email or password');
             }
+
+            console.log('✅ Login successful:', result.data);
             
-            const user = {
-                id: Date.now(),
-                name: name,
-                email: email,
-                role: role
-            };
+            // Store user data in localStorage
+            localStorage.setItem('supportFlowUser', JSON.stringify(result.data));
             
-            console.log('✅ Login successful:', user);
-            return user;
+            return result.data;
+            
         } catch (error) {
             console.error('❌ Login error:', error);
-            throw new Error('Invalid email or password');
+            throw error;
         }
     }
 
@@ -41,35 +38,61 @@ class TicketAPI {
         try {
             console.log('📝 Registration attempt:', name, email);
             
-            // Demo registration
-            const user = {
-                id: Date.now(),
-                name: name,
-                email: email,
-                role: 'user'
-            };
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, password })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Registration failed');
+            }
+
+            console.log('✅ Registration successful:', result.data);
             
-            console.log('✅ Registration successful:', user);
-            return user;
+            // Store user data in localStorage
+            localStorage.setItem('supportFlowUser', JSON.stringify(result.data));
+            
+            return result.data;
+            
         } catch (error) {
             console.error('❌ Registration error:', error);
-            throw new Error('Registration failed');
+            throw error;
         }
     }
 
-    // REAL TICKET OPERATIONS WITH BACKEND API
+    // TICKET OPERATIONS
 
     // Create a new ticket
     static async createTicket(ticketData) {
         try {
             console.log('📝 Creating ticket via API:', ticketData);
             
+            // Get current user from localStorage
+            const userData = localStorage.getItem('supportFlowUser');
+            if (!userData) {
+                throw new Error('User not authenticated. Please login again.');
+            }
+            
+            const user = JSON.parse(userData);
+            console.log('Current user context:', user);
+            
+            // Add user context
+            const dataWithContext = {
+                ...ticketData,
+                userId: user.id
+            };
+            
             const response = await fetch(`${API_BASE_URL}/tickets`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(ticketData)
+                body: JSON.stringify(dataWithContext)
             });
 
             const result = await response.json();
@@ -87,12 +110,32 @@ class TicketAPI {
         }
     }
 
-    // Get all tickets
-    static async getTickets() {
+    // Get all tickets with role-based filtering
+    static async getTickets(userRole = '', userEmail = '', userId = '') {
         try {
             console.log('📋 Fetching tickets via API...');
             
-            const response = await fetch(`${API_BASE_URL}/tickets`);
+            // Get current user from localStorage if not provided
+            const userData = localStorage.getItem('supportFlowUser');
+            if (userData && (!userRole || !userEmail || !userId)) {
+                const user = JSON.parse(userData);
+                userRole = userRole || user.role;
+                userEmail = userEmail || user.email;
+                userId = userId || user.id;
+            }
+            
+            // Add user role and email to query params for filtering
+            const params = new URLSearchParams();
+            if (userRole) params.append('userRole', userRole);
+            if (userEmail) params.append('userEmail', userEmail);
+            if (userId) params.append('userId', userId);
+            
+            const queryString = params.toString();
+            const url = queryString ? `${API_BASE_URL}/tickets?${queryString}` : `${API_BASE_URL}/tickets`;
+            
+            console.log('Fetching tickets from:', url);
+            
+            const response = await fetch(url);
             const result = await response.json();
 
             if (!response.ok) {
@@ -129,17 +172,41 @@ class TicketAPI {
         }
     }
 
-    // Update ticket
+    // Update ticket with user context
     static async updateTicket(id, ticketData) {
         try {
+            // Validate ticket ID
+            if (!id || id === 'undefined' || id === 'null') {
+                throw new Error('Invalid ticket ID: ID is required');
+            }
+
             console.log('✏️ Updating ticket via API:', id, ticketData);
+            
+            // Get current user from localStorage
+            const userData = localStorage.getItem('supportFlowUser');
+            if (!userData) {
+                throw new Error('User not authenticated. Please login again.');
+            }
+            
+            const user = JSON.parse(userData);
+            console.log('Current user context:', { role: user.role, email: user.email, id: user.id });
+            
+            // Add user context for role-based authorization
+            const dataWithContext = {
+                ...ticketData,
+                userRole: user.role,
+                userEmail: user.email,
+                userId: user.id
+            };
+            
+            console.log('Sending data with context:', dataWithContext);
             
             const response = await fetch(`${API_BASE_URL}/tickets/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(ticketData)
+                body: JSON.stringify(dataWithContext)
             });
 
             const result = await response.json();
@@ -157,13 +224,76 @@ class TicketAPI {
         }
     }
 
-    // Delete ticket
+    // Assign ticket to agent with user context
+    static async assignTicket(id, agentData) {
+        try {
+            console.log('👤 Assigning ticket via API:', id, agentData);
+            
+            // Get current user from localStorage
+            const userData = localStorage.getItem('supportFlowUser');
+            if (!userData) {
+                throw new Error('User not authenticated. Please login again.');
+            }
+            
+            const user = JSON.parse(userData);
+            console.log('Current user context:', { role: user.role, email: user.email, id: user.id });
+            
+            // Add user context for role-based authorization
+            const dataWithContext = {
+                ...agentData,
+                userRole: user.role,
+                userId: user.id
+            };
+            
+            console.log('Sending data with context:', dataWithContext);
+            
+            const response = await fetch(`${API_BASE_URL}/tickets/${id}/assign`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataWithContext)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || `Failed to assign ticket: ${response.status}`);
+            }
+
+            console.log('✅ Ticket assigned successfully via API:', result.data);
+            return result.data;
+            
+        } catch (error) {
+            console.error('❌ Error assigning ticket via API:', error);
+            throw error;
+        }
+    }
+
+    // Delete ticket with user context
     static async deleteTicket(id) {
         try {
             console.log('🗑️ Deleting ticket via API:', id);
             
+            // Get current user from localStorage
+            const userData = localStorage.getItem('supportFlowUser');
+            if (!userData) {
+                throw new Error('User not authenticated. Please login again.');
+            }
+            
+            const user = JSON.parse(userData);
+            console.log('Current user context:', { role: user.role, email: user.email, id: user.id });
+            
             const response = await fetch(`${API_BASE_URL}/tickets/${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userRole: user.role,
+                    userEmail: user.email,
+                    userId: user.id
+                })
             });
 
             const result = await response.json();
@@ -192,7 +322,7 @@ class TicketAPI {
         }
     }
 
-    // Initialize sample data
+    // Initialize sample data (if you still want this)
     static async initSampleData() {
         try {
             const response = await fetch(`${API_BASE_URL}/init-data`, {
@@ -211,6 +341,29 @@ class TicketAPI {
             throw error;
         }
     }
+
+    // Get ticket by ID (alias for getTicket - for compatibility)
+    static async getTicketById(id) {
+        return await this.getTicket(id);
+    }
+
+    // Debug method to check current user data
+    static debugUserData() {
+        console.log('=== TICKETAPI USER DATA DEBUG ===');
+        const userData = localStorage.getItem('supportFlowUser');
+        console.log('LocalStorage User Data:', userData);
+        
+        if (userData) {
+            const user = JSON.parse(userData);
+            console.log('Parsed User:', user);
+            console.log('User Role:', user.role);
+            console.log('User Email:', user.email);
+            console.log('User ID:', user.id);
+        } else {
+            console.log('No user data found in localStorage');
+        }
+        console.log('=================================');
+    }
 }
 
 // Global instance
@@ -218,14 +371,19 @@ const ticketAPI = {
     login: (email, password) => TicketAPI.login(email, password),
     register: (name, email, password) => TicketAPI.register(name, email, password),
     createTicket: (ticketData) => TicketAPI.createTicket(ticketData),
-    getTickets: () => TicketAPI.getTickets(),
+    getTickets: (userRole, userEmail, userId) => TicketAPI.getTickets(userRole, userEmail, userId),
     getTicket: (id) => TicketAPI.getTicket(id),
+    getTicketById: (id) => TicketAPI.getTicketById(id),
     updateTicket: (id, ticketData) => TicketAPI.updateTicket(id, ticketData),
+    assignTicket: (id, agentData) => TicketAPI.assignTicket(id, agentData),
     deleteTicket: (id) => TicketAPI.deleteTicket(id),
     healthCheck: () => TicketAPI.healthCheck(),
-    initSampleData: () => TicketAPI.initSampleData()
+    initSampleData: () => TicketAPI.initSampleData(),
+    debugUserData: () => TicketAPI.debugUserData()
 };
 
 // Make available globally
 window.TicketAPI = TicketAPI;
 window.ticketAPI = ticketAPI;
+
+console.log('✅ ticketAPI.js loaded successfully');
